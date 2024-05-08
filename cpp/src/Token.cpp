@@ -1,5 +1,9 @@
 # include "Token.h"
 
+# include <iostream>
+
+using namespace std;
+
 
 Token::Token (TokenType type, string lexeme, Object *literal, int line) {
     this -> type = type;
@@ -9,5 +13,6 @@ Token::Token (TokenType type, string lexeme, Object *literal, int line) {
 }
 
 string Token::toString () {
-    return this -> type + " " + this -> lexeme + " " + this -> literal -> toString();
+    string literal_string = (this -> literal != NULL) ? this -> literal -> toString() : "NULL";
+    return this -> type + " " + this -> lexeme + " " + literal_string;
 }

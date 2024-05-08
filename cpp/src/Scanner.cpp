@@ -98,7 +98,7 @@ void Scanner::string_token () {
 
     advance();
 
-    string value = this -> source.substr(start + 1, current - start - 1);
+    string value = this -> source.substr(start + 1, current - start - 2);
     String *str = new String(value);
     addToken(STRING, str);
 }
@@ -126,13 +126,14 @@ void Scanner::number () {
 
 void Scanner::identifier () {
     while (isAlphanumeric(peek())) advance();
-
+    TokenType keyword;
     string id = this -> source.substr(start, current - start);
-    TokenType keyword = keywords[id];
-    if (keyword == NULL) {
+    if (keywords.find(id) == keywords.end()) {
         keyword = IDENTIFIER;
     }
-
+    else {
+        keyword = keywords[id];
+    }
     addToken(keyword);
 }
 
@@ -147,15 +148,15 @@ void Scanner::scanToken () {
     char c = advance();
     switch (c) {
         case '(': addToken(LEFT_PAREN); break;
-        case ')': addToken(LEFT_PAREN); break;
-        case '{': addToken(LEFT_PAREN); break;
-        case '}': addToken(LEFT_PAREN); break;
-        case ',': addToken(LEFT_PAREN); break;
-        case '.': addToken(LEFT_PAREN); break;
-        case '-': addToken(LEFT_PAREN); break;
-        case '+': addToken(LEFT_PAREN); break;
-        case ';': addToken(LEFT_PAREN); break;
-        case '*': addToken(LEFT_PAREN); break;
+        case ')': addToken(RIGHT_PAREN); break;
+        case '{': addToken(LEFT_BRACE); break;
+        case '}': addToken(RIGHT_BRACE); break;
+        case ',': addToken(COMMA); break;
+        case '.': addToken(DOT); break;
+        case '-': addToken(MINUS); break;
+        case '+': addToken(PLUS); break;
+        case ';': addToken(SEMICOLON); break;
+        case '*': addToken(STAR); break;
         case '!':
             addToken(match('=') ? BANG_EQUAL : BANG);
             break;
