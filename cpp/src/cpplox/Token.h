@@ -14,6 +14,7 @@ class Token {
         /* default empty constructor if is not defined */
         Token () = default;
         string toString ();
+        string getLexeme();
     private:
         TokenType type;
         string lexeme;

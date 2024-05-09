@@ -12,6 +12,10 @@ Token::Token (TokenType type, string lexeme, Object *literal, int line) {
     this -> literal = literal;
 }
 
+string Token::getLexeme () {
+    return this -> lexeme;
+}
+
 string Token::toString () {
     string literal_string = (this -> literal != NULL) ? this -> literal -> toString() : "NULL";
     return this -> type + " " + this -> lexeme + " " + literal_string;
