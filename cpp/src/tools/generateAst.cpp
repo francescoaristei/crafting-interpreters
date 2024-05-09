@@ -8,6 +8,8 @@
 
 using namespace std;
 
+/* Utility file to generate the different expression classes, tokens in the AST. Visitor Design Pattern. */
+
 /* trim from start */
 void ltrim (string &s) { /* pass by reference */
     s.erase(s.begin(), find_if(s.begin(), s.end(), [](unsigned char ch) {
@@ -56,10 +58,17 @@ void defineType (string outputdir, string basename, string classname, string fie
         file_header << "# include " << "\"" << basename << ".h" << "\"" << "\n";
     }
 
+    file_header << "# include " << "\"" << "Visitor.h" << "\"" << "\n";
+
     file_header << "\n";
     file_header << "class " << classname << ": public " << basename << " {" << "\n";
     file_header << "   public: " << "\n";
     file_header << "       " + classname << " (" + fields + ");" + "\n";
+
+    /* template function accept */
+    file_header << "       " << "template <typename R>\n";
+    file_header << "       " << "R accept (Visitor<R> visitor);\n";
+
 
     /* extract single fields */
     stringstream each_field(fields);
@@ -93,6 +102,8 @@ void defineType (string outputdir, string basename, string classname, string fie
         file_cpp << "# include " << "\"" << *itr << ".h" << "\"" << "\n";
     }
 
+    file_cpp << "# include " << "\"" << "Visitor.h" << "\"" << "\n";
+
     file_cpp << "\n";
 
     /* to iterate over the fields separating by char */
@@ -110,8 +121,49 @@ void defineType (string outputdir, string basename, string classname, string fie
     for (vector<string>::iterator itr = attrList.begin(); itr != attrList.end(); ++itr) {
         file_cpp << "    " << "this -> " << *itr << " = " << *itr << ";" << "\n";
     }
-    file_cpp << "};";
+
+    file_cpp << "};\n";
+    file_cpp << "template <typename R>\n";
+    file_cpp << "R " <<  classname << "::" << "accept (Visitor<R> visitor) {\n";
+    file_cpp << "   return visitor.visit()\n";
+    file_cpp << "}\n";
+
     file_cpp.close();
+
+
+}
+
+void defineVisitor (string outputdir, string basename, vector<string> expressions) {
+    string path = outputdir + "/" + "Visitor.h";
+    ofstream file (path, ios::app);
+    if (!file.is_open()) {
+        cout << "Error opening the file, exiting...\n";
+        exit(64);
+    }
+
+    for (vector<string>::iterator itr = expressions.begin(); itr != expressions.end(); ++itr) {
+        size_t index = itr -> find(':');
+        string type = itr -> substr(0, index);
+        rtrim(type);
+        file << "# include " << "\"" << type << ".h" << "\"" << "\n"; 
+    }
+    file << "\n";
+    
+    string baseToLower = basename;
+    transform(baseToLower.begin(), baseToLower.end(), baseToLower.begin(), ::tolower);
+    file << "template <typename R>\n";
+    file << "class Visitor {\n";
+    file << "   public:\n";
+    for (vector<string>::iterator itr = expressions.begin(); itr != expressions.end(); ++itr) {
+        size_t index = itr -> find(":");
+        string type = itr -> substr(0, index);
+        rtrim(type);
+        /* define pure virtual methods */
+        file << "       virtual R visit" << type << basename + " (" << type << " " << baseToLower << ")"; 
+        file << " = " << "0;" << "\n";
+    }
+
+    file << "};";
 }
 
 
@@ -122,10 +174,16 @@ void defineAst (string outputdir, string basename, vector<string> expressions) {
         cerr << "Could not open the file, exiting...\n";
         exit(64);
     }
-    file << "class " << basename << "{";
+
+    file << "# include " << "\"" << "Visitor.h" << "\"" << "\n";
+    file << "class " << basename << " {";
     file << "\n";
+    file << "   template <typename R>\n";
+    file << "   R accept (Visitor<R> visitor);\n";
     file << "};";
     file.close();
+
+    defineVisitor(outputdir, basename, expressions);
 
     for (vector<string>::iterator itr = expressions.begin(); itr != expressions.end(); ++itr) {
         size_t index = itr -> find(':');
