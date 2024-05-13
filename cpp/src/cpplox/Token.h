@@ -15,6 +15,8 @@ class Token {
         Token () = default;
         string toString ();
         string getLexeme();
+        TokenType getType();
+        int getLine();
     private:
         TokenType type;
         string lexeme;

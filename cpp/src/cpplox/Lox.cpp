@@ -6,6 +6,7 @@
 # include <string>
 # include "Token.h"
 # include "Scanner.h"
+# include "TokenType.h"
 
 using namespace std;
 
@@ -82,4 +83,13 @@ void Lox::error (int line, string msg) {
 void Lox::report (int line, string where, string msg) {
     cerr << "[line " << line << "] Error " << where + ": " << msg << "\n";
     Lox::hadError = true;
+}
+
+void Lox::error (Token token, string msg) {
+    if (token.getType() == TokenType::EOFF) {
+        report(token.getType(), " at end", msg);
+    }
+    else {
+        report(token.getLine(), " at '" + token.getLexeme() + "'", msg);
+    }
 }

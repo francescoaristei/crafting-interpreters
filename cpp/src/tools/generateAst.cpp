@@ -27,7 +27,7 @@ void rtrim (string &s) {
 /* create subclass for each subclass */
 void defineType (string outputdir, string &basename, string &classname, string &fields) {
     string path_header = outputdir + "/" + classname + ".h";
-    ofstream file_header(path_header, ios::app);
+    ofstream file_header(path_header);
     if (!file_header.is_open()) {
         cerr << "Could not open the file_header, exiting...\n";
         exit(64);
@@ -50,6 +50,13 @@ void defineType (string outputdir, string &basename, string &classname, string &
         classList.push_back(class_seg.substr(0, index));
     }
 
+    /* extract single fields of each subclass with associated subclass of belonging */
+    stringstream each_field(fields);
+    string segment;
+    vector<string> segList;
+    while (getline(each_field, segment, ','))
+        segList.push_back(segment);
+
     /* include sublcasses that make up attribute list */
     for (vector<string>::iterator itr = classList.begin(); itr != classList.end(); ++itr) {
         file_header << "# include " << "\"" << *itr <<".h" << "\"" << "\n";
@@ -59,64 +66,73 @@ void defineType (string outputdir, string &basename, string &classname, string &
         file_header << "# include " << "\"" << basename << ".h" << "\"" << "\n";
     }
 
-    file_header << "# include " << "\"" << "Visitor.h" << "\"" << "\n";
+    //file_header << "# include " << "\"" << "Visitor.h" << "\"" << "\n";
+    file_header << "template <typename R> class Visitor;\n";
 
     file_header << "\n";
-    file_header << "class " << classname << ": public " << basename << " {" << "\n";
+    file_header << "template <typename R>\n";
+    file_header << "class " << classname << ": public " << basename << "<R>" << " {" << "\n";
     file_header << "   public: " << "\n";
+
     /* fields of the subclasses*/
-    file_header << "       " + classname << " (" + fields + ");" + "\n";
+    file_header << "       " << classname << " (";
+    for (vector<string>::iterator itr = segList.begin(); itr != segList.end(); ++itr) {
+        ltrim(*itr);
+        size_t index = itr -> find(" ");
+        string fieldName = itr -> substr(0, index);
+        string varName = itr -> substr(index + 1, itr -> length() - index);
+        if (fieldName == "Expr") {
+            file_header << fieldName << "<R> " << varName;
+        }
+        else {
+            file_header << fieldName << " " << varName;
+        }
+        if (itr + 1 != segList.end()) {
+            file_header << ", ";
+        }
+    }
+
+    file_header << ");" << "\n";
 
     /* template function accept */
-    file_header << "       " << "template <typename R>\n";
+    //file_header << "       " << "template <typename R>\n";
     file_header << "       " << "R accept (Visitor<R>& visitor);\n";
-
-
-    /* extract single fields of each subclass with associated subclass of belonging */
-    stringstream each_field(fields);
-    string segment;
-    vector<string> segList;
-    while (getline(each_field, segment, ','))
-        segList.push_back(segment);
-
     /* getter methods for the private fields */
     for (vector<string>::iterator itr = segList.begin(); itr != segList.end(); ++itr) {
         ltrim(*itr);
         size_t index = itr -> find(" ");
         string fieldName = itr -> substr(0, index);
         string varName = itr -> substr(index + 1, itr -> length() - index);
-        file_header << "       " << fieldName << " get" << varName << "();\n";
+        if (fieldName == "Expr") {
+            file_header << "       " << fieldName << "<R> " << "get" << varName << "();\n";
+        }
+        else {
+            if (classname == "Literal") {
+                file_header << "       " << fieldName << "*" << " " " get" << varName << "();\n";
+            }
+            else {
+                file_header << "       " << fieldName << " " " get" << varName << "();\n";
+            }
+        }
     }
 
     /* private fields */
     file_header << "   private: " << "\n";
+    /* getter methods for the private fields */
     for (vector<string>::iterator itr = segList.begin(); itr != segList.end(); ++itr) {
         ltrim(*itr);
-        file_header << "       " << *itr << ";" << "\n";
+        size_t index = itr -> find(" ");
+        string fieldName = itr -> substr(0, index);
+        string varName = itr -> substr(index + 1, itr -> length() - index);
+        if (fieldName == "Expr") {
+            file_header << "       " << fieldName << "<R> "<< varName << ";\n";
+        }
+        else {
+            file_header << "       " << fieldName << " "  << varName << ";\n";
+        }
     }
-
     file_header << "};" << "\n";
-    file_header << "# endif";
-    file_header.close();
-
-    string path_cpp = outputdir + "/" + classname + ".cpp";
-
-    ofstream file_cpp(path_cpp, ios::app);
-    if (!file_cpp.is_open()) {
-        cerr << "Could not open the file header, exiting...\n";
-        exit(64);
-    }
-
-    file_cpp << "# include " << "\"" << classname << ".h" << "\"" << "\n";
-
-    /* include sublcasses that make up attribute list */
-    for (vector<string>::iterator itr = classList.begin(); itr != classList.end(); ++itr) {
-        file_cpp << "# include " << "\"" << *itr << ".h" << "\"" << "\n";
-    }
-
-    file_cpp << "# include " << "\"" << "Visitor.h" << "\"" << "\n";
-
-    file_cpp << "\n";
+    file_header << "\n";
 
     /* to iterate over the fields separating by char */
     stringstream each_attr(fields);
@@ -129,14 +145,33 @@ void defineType (string outputdir, string &basename, string &classname, string &
         attrList.push_back(attr_seg.substr(index, attr_seg.length() - index));
     }
 
-    file_cpp << classname << "::" << classname << " (" << fields << ") {" << "\n";
-    for (vector<string>::iterator itr = attrList.begin(); itr != attrList.end(); ++itr) {
-        file_cpp << "    " << "this -> " << *itr << " = " << *itr << ";" << "\n";
-        file_cpp << "\n";
+    file_header << "template <typename R>\n";
+    file_header << classname << "<R>" << "::" << classname << " (";
+
+
+    /* fields of the subclasses*/
+    for (vector<string>::iterator itr = segList.begin(); itr != segList.end(); ++itr) {
+        ltrim(*itr);
+        size_t index = itr -> find(" ");
+        string fieldName = itr -> substr(0, index);
+        string varName = itr -> substr(index + 1, itr -> length() - index);
+        if (fieldName == "Expr") {
+            file_header << fieldName << "<R> " << varName;
+        }
+        else {
+            file_header << fieldName << " " << varName;
+        }
+        if (itr + 1 != segList.end()) {
+            file_header << ", ";
+        }
     }
 
-
-    file_cpp << "};\n";
+    file_header << ") {" << "\n";
+    for (vector<string>::iterator itr = attrList.begin(); itr != attrList.end(); ++itr) {
+        file_header << "    " << "this -> " << *itr << " = " << *itr << ";" << "\n";
+    }
+    file_header << "};\n";
+    file_header << "\n";
 
     /* implementation of methods to return attributes of the subclasses */
     for (vector<string>::iterator itr = segList.begin(); itr != segList.end(); ++itr) {
@@ -144,31 +179,45 @@ void defineType (string outputdir, string &basename, string &classname, string &
         size_t index = itr -> find(" ");
         string fieldName = itr -> substr(0, index);
         string varName = itr -> substr(index + 1, itr -> length() - index);
-        file_cpp << fieldName << " " << classname << "::" "get" << varName << "() {\n";
-        file_cpp << "   " << "return" << " this -> " << varName << ";\n";
-        file_cpp << "}\n";
-        file_cpp << "\n";
-
+        file_header << "template <typename R>\n";
+        if (fieldName == "Expr") {
+            file_header << fieldName << "<R>" << " " << classname << "<R>" << "::" "get" << varName << "() {\n";
+            file_header << "   " << "return " << "this -> " << varName << ";\n";
+        }
+        else {
+            if (classname == "Literal") {
+                file_header << fieldName << "*" << " " << classname << "<R>" << "::" "get" << varName << "() {\n";
+                file_header << "   " << "return " << "&(this -> " << varName << ");\n";
+            }
+            else {
+                file_header << fieldName << " " << classname << "<R>" << "::" "get" << varName << "() {\n";
+                file_header << "   " << "return " << "this -> " << varName << ";\n";
+            }
+        }
+        file_header << "}\n";
+        file_header << "\n";
     }
 
-    file_cpp << "template <typename R>\n";
-    file_cpp << "R " <<  classname << "::" << "accept (Visitor<R>& visitor) {\n";
-    file_cpp << "   return visitor.visit" << classname << basename << "(this);\n";
-    file_cpp << "}\n";
+    file_header << "template <typename R>\n";
+    file_header << "R " <<  classname << "<R>" << "::" << "accept (Visitor<R>& visitor) {\n";
+    file_header << "   return visitor.visit" << classname << basename << "(*this);\n";
+    file_header << "}\n";
 
-    file_cpp.close();
-
+    file_header << "# endif";
+    file_header.close();
 
 }
 
 void defineVisitor (string outputdir, string &basename, vector<string> &expressions) {
     string path = outputdir + "/" + "Visitor.h";
-    ofstream file (path, ios::app);
+    ofstream file (path);
     if (!file.is_open()) {
         cout << "Error opening the file, exiting...\n";
         exit(64);
     }
 
+    file << "# ifndef VISITOR\n";
+    file << "# define VISITOR\n";
     for (vector<string>::iterator itr = expressions.begin(); itr != expressions.end(); ++itr) {
         size_t index = itr -> find(':');
         string type = itr -> substr(0, index);
@@ -187,28 +236,43 @@ void defineVisitor (string outputdir, string &basename, vector<string> &expressi
         string type = itr -> substr(0, index);
         rtrim(type);
         /* define pure virtual methods */
-        file << "       virtual R visit" << type << basename + " (" << type << " " << baseToLower << ")"; 
+        file << "       virtual R visit" << type << basename + " (" << type << "<R>" << " " << baseToLower << ")"; 
         file << " = " << "0;" << "\n";
     }
 
-    file << "};";
+    file << "};\n";
+    file << "# endif\n";
+    file.close();
 }
 
 
 void defineAst (string outputdir, string basename, vector<string> &expressions) {
     string path = outputdir + "/" + basename + ".h";
-    ofstream file(path, ios::app);
+    ofstream file(path);
     if (!file.is_open()) {
         cerr << "Could not open the file, exiting...\n";
         exit(64);
     }
 
-    file << "# include " << "\"" << "Visitor.h" << "\"" << "\n";
+    file << "# ifndef EXPR\n";
+    file << "# define EXPR\n";
+    //file << "# include " << "\"" << "Visitor.h" << "\"" << "\n";
+    file << "template <typename R> class Visitor;\n";
+    file << "\n";
+    file << "template <typename R>\n";
     file << "class " << basename << " {";
     file << "\n";
-    file << "   template <typename R>\n";
-    file << "   R accept (Visitor<R> visitor);\n";
-    file << "};";
+    //file << "   template <typename R>\n";
+    file << "   public:\n";
+    file << "       virtual R accept (Visitor<R>& visitor);\n";
+    file << "};\n";
+    file << "\n";
+    file << "template <typename R>\n";
+    file << "R Expr<R>::accept (Visitor<R>& visitor) {\n";
+    file << "   return R();\n";
+    file << "};\n";
+    file << "\n";
+    file << "# endif\n";
     file.close();
 
     defineVisitor(outputdir, basename, expressions);

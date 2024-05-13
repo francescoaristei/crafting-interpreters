@@ -20,3 +20,11 @@ string Token::toString () {
     string literal_string = (this -> literal != NULL) ? this -> literal -> toString() : "NULL";
     return this -> type + " " + this -> lexeme + " " + literal_string;
 }
+
+TokenType Token::getType () {
+    return this -> type;
+}
+
+int Token::getLine () {
+    return this -> line;
+}

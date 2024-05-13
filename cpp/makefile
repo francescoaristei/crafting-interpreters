@@ -13,16 +13,15 @@ LDFLAGS :=
 # dirs
 SRC_DIR := src/cpplox
 AST_DIR := src/tools
+AST_CLASSES_DIR := src/cpplox
 OBJ_DIR := obj
 OBJ_AST_DIR := src/tools/objast
 BIN_DIR := bin
 AST_BIN_DIR := src/tools/bin
-AST_CLASSES_DIR := src/tools/ast_classes
-
-
 
 # source files
-SRCS := $(wildcard $(SRC_DIR)/*.cpp)
+SRCS := $(filter-out $(SRC_DIR)/astPrinter.cpp, $(wildcard $(SRC_DIR)/*.cpp))
+#SRCS := $(wildcard $(SRC_DIR)/*.cpp)
 AST_SRCS := $(wildcard $(AST_DIR)/*.cpp)
 OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 OBJS_AST := $(patsubst $(AST_DIR)/%.cpp, $(OBJ_AST_DIR)/%.o, $(AST_SRCS))
@@ -52,18 +51,11 @@ $(OBJ_AST_DIR)/%.o: $(AST_DIR)/%.cpp
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR) $(OBJ_AST_DIR) $(AST_BIN_DIR)
 
-.PHONY: clean_ast
-clean_ast:
-	rm -rf $(AST_CLASSES_DIR)
-
 .PHONY: run_main
 run_main: $(MAIN)
 	./$(MAIN)
 
 .PHONY: run_genast
 run_genast: $(MAIN_AST)
-#@echo "Enter any additional command line arguments:"
-#@read ARGS;
 	@mkdir -p $(AST_CLASSES_DIR)
-#./$(MAIN_AST) $$ARGS
 	./$(MAIN_AST) $(AST_CLASSES_DIR)
