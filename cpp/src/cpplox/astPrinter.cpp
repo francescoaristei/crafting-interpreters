@@ -1,7 +1,6 @@
 # include <string>
 # include <iostream>
 # include "Visitor.h"
-//# include "Expr.h"
 # include "Binary.h"
 # include "Literal.h"
 # include "Unary.h"
@@ -18,11 +17,11 @@ int main (int argc, char *argv[]) {
     Token tok2(TokenType::STAR, "*", NULL, 1);
     Double d1(123);
     Double d2(45.67);
-    Literal<string> l1(d1);
-    Literal<string> l2(d2);
-    Grouping<string> gr(l2);
-    Unary<string> un(tok1, l1);
-    Binary<string> bin(un, tok2, gr);
+    Literal<string> l1(&d1);
+    Literal<string> l2(&d2);
+    Grouping<string> gr(&l2);
+    Unary<string> un(tok1, &l1);
+    Binary<string> bin(&un, tok2, &gr);
     AstPrinter<string> ast;
-    cout << ast.print(bin);
+    cout << ast.print(&bin);
 }

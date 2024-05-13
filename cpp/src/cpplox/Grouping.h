@@ -7,20 +7,20 @@ template <typename R> class Visitor;
 template <typename R>
 class Grouping: public Expr<R> {
    public: 
-       Grouping (Expr<R> expression);
+       Grouping (Expr<R> *expression);
        R accept (Visitor<R>& visitor) override;
-       Expr<R> getexpression();
+       Expr<R>* getexpression();
    private: 
-       Expr<R> expression;
+       Expr<R> *expression;
 };
 
 template <typename R>
-Grouping<R>::Grouping (Expr<R> expression) {
+Grouping<R>::Grouping (Expr<R> *expression) {
     this ->  expression =  expression;
 };
 
 template <typename R>
-Expr<R> Grouping<R>::getexpression() {
+Expr<R>* Grouping<R>::getexpression() {
    return this -> expression;
 }
 

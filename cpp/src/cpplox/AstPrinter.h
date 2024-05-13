@@ -19,36 +19,33 @@ using namespace std;
 template <typename R>
 class AstPrinter: public Visitor<string> {
     public:
-        //template <typename R>
-        string print(Expr<R>& expr);
+        string print(Expr<R> *expr);
         string visitBinaryExpr (Binary<R>& expr);
         string visitGroupingExpr (Grouping<R>& expr);
         string visitLiteralExpr (Literal<R>& expr);
         string visitUnaryExpr (Unary<R>& expr);
     private:
         /* vector of expr instead of variadic argument, bad? */
-        string parenthesize (string name, vector<Expr<R>>& exprs);
+        string parenthesize (string name, vector<Expr<R>*>& exprs);
 };
 
 template <typename R>
-string AstPrinter<R>::print (Expr<R>& expr) {
-    return expr.accept(*this);
+string AstPrinter<R>::print (Expr<R> *expr) {
+    return expr -> accept(*this);
 }
 
 template <typename R>
 string AstPrinter<R>::visitBinaryExpr (Binary<R>& expr) {
-    vector<Expr<R>> exprs;
+    vector<Expr<R>*> exprs;
     exprs.push_back(expr.getleft());
     exprs.push_back(expr.getright());
-    //vector<Expr<R>>& exprs = {expr.getleft(), expr.getright()};
     return parenthesize(expr.getop().getLexeme(), exprs);
 }
 
 template <typename R>
 string AstPrinter<R>::visitGroupingExpr (Grouping<R>& expr) {
-    vector<Expr<R>> exprs;
+    vector<Expr<R>*> exprs;
     exprs.push_back(expr.getexpression());
-    //vector<Expr<R>>& exprs = {expr.getexpression()};
     return parenthesize("group", exprs);
 }
 
@@ -60,22 +57,17 @@ string AstPrinter<R>::visitLiteralExpr (Literal<R>& expr) {
 
 template <typename R>
 string AstPrinter<R>::visitUnaryExpr (Unary<R>& expr) {
-    vector<Expr<R>> exprs;
+    vector<Expr<R>*> exprs;
     exprs.push_back(expr.getright());
-    //vector<Expr<R>>& exprs = {expr.getright()};
     return parenthesize(expr.getop().getLexeme(), exprs);
 }
 
 template <typename R>
-string AstPrinter<R>::parenthesize (string name, vector<Expr<R>>& exprs) {
+string AstPrinter<R>::parenthesize (string name, vector<Expr<R>*>& exprs) {
     string output = "(" + name;
-    /*for (typename vector<Expr<R>*>::iterator itr = exprs.begin(); itr != exprs.end(); ++itr) {
+    for (typename vector<Expr<R>*>::iterator itr = exprs.begin(); itr != exprs.end(); ++itr) {
         output += " ";
-        output += itr -> accept(*this);
-    }*/
-    for (auto& expr_ptr: exprs) {
-        output += " ";
-        output += expr_ptr.accept(*this);
+        output += (*itr) -> accept(*this);
     }
     output += ")";
     return output;

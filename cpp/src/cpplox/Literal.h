@@ -7,21 +7,21 @@ template <typename R> class Visitor;
 template <typename R>
 class Literal: public Expr<R> {
    public: 
-       Literal (Object value);
+       Literal (Object *value);
        R accept (Visitor<R>& visitor) override;
        Object*  getvalue();
    private: 
-       Object value;
+       Object *value;
 };
 
 template <typename R>
-Literal<R>::Literal (Object value) {
+Literal<R>::Literal (Object *value) {
     this ->  value =  value;
 };
 
 template <typename R>
 Object* Literal<R>::getvalue() {
-   return &(this -> value);
+   return this -> value;
 }
 
 template <typename R>

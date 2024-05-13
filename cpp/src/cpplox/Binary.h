@@ -8,26 +8,26 @@ template <typename R> class Visitor;
 template <typename R>
 class Binary: public Expr<R> {
    public: 
-       Binary (Expr<R> left, Token op, Expr<R> right);
+       Binary (Expr<R> *left, Token op, Expr<R> *right);
        R accept (Visitor<R>& visitor) override;
-       Expr<R> getleft();
+       Expr<R>* getleft();
        Token  getop();
-       Expr<R> getright();
+       Expr<R>* getright();
    private: 
-       Expr<R> left;
+       Expr<R> *left;
        Token op;
-       Expr<R> right;
+       Expr<R> *right;
 };
 
 template <typename R>
-Binary<R>::Binary (Expr<R> left, Token op, Expr<R> right) {
+Binary<R>::Binary (Expr<R> *left, Token op, Expr<R> *right) {
     this ->  left =  left;
     this ->  op =  op;
     this ->  right =  right;
 };
 
 template <typename R>
-Expr<R> Binary<R>::getleft() {
+Expr<R>* Binary<R>::getleft() {
    return this -> left;
 }
 
@@ -37,7 +37,7 @@ Token Binary<R>::getop() {
 }
 
 template <typename R>
-Expr<R> Binary<R>::getright() {
+Expr<R>* Binary<R>::getright() {
    return this -> right;
 }
 

@@ -10,12 +10,13 @@
 
 using namespace std;
 
+// ADJUST EXPR RETURN TO AVOID SLICING
+
 template <typename R>
 class Parser {
     public:
         Parser(vector<Token> tokens);
         Expr<R> parse();
-
     private:
         class ParseError: public runtime_error {};
         vector<Token> tokens;
@@ -112,7 +113,6 @@ Token Parser<R>::consume (TokenType type, string message) {
 
     throw error(peek(), message);
 }
-
 
 
 /* primary --> NUMBER | STRING | "true" | "false" | "nil" | "("expression")" */
@@ -214,7 +214,7 @@ Expr<R> Parser<R>::expression () {
 template <typename R>
 Expr<R> Parser<R>::parse () {
     try {
-        return expressio();
+        return expression();
     } catch (ParseError error) {
         return NULL;
     }

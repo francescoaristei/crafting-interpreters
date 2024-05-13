@@ -82,7 +82,10 @@ void defineType (string outputdir, string &basename, string &classname, string &
         string fieldName = itr -> substr(0, index);
         string varName = itr -> substr(index + 1, itr -> length() - index);
         if (fieldName == "Expr") {
-            file_header << fieldName << "<R> " << varName;
+            file_header << fieldName << "<R> " << "*" << varName;
+        }
+        else if (fieldName == "Object") {
+            file_header << fieldName << " *" << varName;
         }
         else {
             file_header << fieldName << " " << varName;
@@ -104,7 +107,7 @@ void defineType (string outputdir, string &basename, string &classname, string &
         string fieldName = itr -> substr(0, index);
         string varName = itr -> substr(index + 1, itr -> length() - index);
         if (fieldName == "Expr") {
-            file_header << "       " << fieldName << "<R> " << "get" << varName << "();\n";
+            file_header << "       " << fieldName << "<R>* " << "get" << varName << "();\n";
         }
         else {
             if (classname == "Literal") {
@@ -125,7 +128,10 @@ void defineType (string outputdir, string &basename, string &classname, string &
         string fieldName = itr -> substr(0, index);
         string varName = itr -> substr(index + 1, itr -> length() - index);
         if (fieldName == "Expr") {
-            file_header << "       " << fieldName << "<R> "<< varName << ";\n";
+            file_header << "       " << fieldName << "<R> "<< "*" << varName << ";\n";
+        }
+        else if (fieldName == "Object") {
+            file_header << "       " << fieldName << " *" << varName << ";\n";
         }
         else {
             file_header << "       " << fieldName << " "  << varName << ";\n";
@@ -156,7 +162,10 @@ void defineType (string outputdir, string &basename, string &classname, string &
         string fieldName = itr -> substr(0, index);
         string varName = itr -> substr(index + 1, itr -> length() - index);
         if (fieldName == "Expr") {
-            file_header << fieldName << "<R> " << varName;
+            file_header << fieldName << "<R> *" << varName;
+        }
+        else if (fieldName == "Object") {
+            file_header << fieldName << " * " << varName;
         }
         else {
             file_header << fieldName << " " << varName;
@@ -181,13 +190,13 @@ void defineType (string outputdir, string &basename, string &classname, string &
         string varName = itr -> substr(index + 1, itr -> length() - index);
         file_header << "template <typename R>\n";
         if (fieldName == "Expr") {
-            file_header << fieldName << "<R>" << " " << classname << "<R>" << "::" "get" << varName << "() {\n";
+            file_header << fieldName << "<R>*" << " " << classname << "<R>" << "::" "get" << varName << "() {\n";
             file_header << "   " << "return " << "this -> " << varName << ";\n";
         }
         else {
             if (classname == "Literal") {
                 file_header << fieldName << "*" << " " << classname << "<R>" << "::" "get" << varName << "() {\n";
-                file_header << "   " << "return " << "&(this -> " << varName << ");\n";
+                file_header << "   " << "return " << "this -> " << varName << ";\n";
             }
             else {
                 file_header << fieldName << " " << classname << "<R>" << "::" "get" << varName << "() {\n";
@@ -267,11 +276,11 @@ void defineAst (string outputdir, string basename, vector<string> &expressions) 
     file << "       virtual R accept (Visitor<R>& visitor);\n";
     file << "};\n";
     file << "\n";
-    file << "template <typename R>\n";
+    /*file << "template <typename R>\n";
     file << "R Expr<R>::accept (Visitor<R>& visitor) {\n";
     file << "   return R();\n";
     file << "};\n";
-    file << "\n";
+    file << "\n";*/
     file << "# endif\n";
     file.close();
 

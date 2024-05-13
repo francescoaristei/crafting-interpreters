@@ -4,7 +4,7 @@
 # include <fstream>
 # include <iostream>
 # include <exception>
-
+# include "Token.h"
 
 using namespace std;
 

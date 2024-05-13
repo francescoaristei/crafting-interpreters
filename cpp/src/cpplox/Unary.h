@@ -7,17 +7,17 @@ template <typename R> class Visitor;
 template <typename R>
 class Unary: public Expr<R> {
    public: 
-       Unary (Token op, Expr<R> right);
+       Unary (Token op, Expr<R> *right);
        R accept (Visitor<R>& visitor) override;
        Token  getop();
-       Expr<R> getright();
+       Expr<R>* getright();
    private: 
        Token op;
-       Expr<R> right;
+       Expr<R>* right;
 };
 
 template <typename R>
-Unary<R>::Unary (Token op, Expr<R> right) {
+Unary<R>::Unary (Token op, Expr<R> *right) {
     this ->  op =  op;
     this ->  right =  right;
 };
@@ -28,7 +28,7 @@ Token Unary<R>::getop() {
 }
 
 template <typename R>
-Expr<R> Unary<R>::getright() {
+Expr<R>* Unary<R>::getright() {
    return this -> right;
 }
 
