@@ -10,6 +10,7 @@ class String: public Object {
     public:
         String (string value);
         string toString();
+        string getValue();
         
     private:
         string value;

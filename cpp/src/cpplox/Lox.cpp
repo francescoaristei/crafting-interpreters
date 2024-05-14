@@ -7,6 +7,10 @@
 # include "Token.h"
 # include "Scanner.h"
 # include "TokenType.h"
+# include "Interpreter.h"
+# include "Parser.h"
+# include "Expr.h"
+# include "AstPrinter.h"
 
 using namespace std;
 
@@ -39,6 +43,10 @@ void Lox::runFile (string path) {
     if (hadError) {
         exit(65);
     }
+
+    if (hadRuntimeError) {
+        exit(70);
+    }
 }
 
 void Lox::runPrompt () {
@@ -68,15 +76,29 @@ void Lox::run (string source) {
     Scanner scanner(source);
     vector<Token> tokens = scanner.scanTokens();
 
-    for (int i = 0; i < tokens.size(); i++) {
+    /*for (int i = 0; i < tokens.size(); i++) {
         cout << tokens[i].toString() << "\n";
-    }
+    }*/
+    //Parser<string> parser(tokens);
+    //Expr<Object*> *expression = parser.parse();
+    if (hadError)
+        return;
+
+    //interpreter->interpret(expression);
+
+    //AstPrinter<string> ast;
+    //cout << ast.print(expression);
 }
 
 
 /* reports syntax errors detected in the source code of input */
 void Lox::error (int line, string msg) {
     report (line, "", msg);
+}
+
+void Lox::runtimeError (Interpreter<Object*>::RuntimeError error) {
+    cout << error.getMessage() << "\n[line " << error.getToken().getLine() + "]";
+    hadRuntimeError = true;
 }
 
 

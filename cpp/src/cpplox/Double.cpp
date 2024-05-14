@@ -13,3 +13,7 @@ string Double::toString () {
     strs << this -> value;
     return strs.str();
 }
+
+double Double::getValue () {
+    return this -> value;
+}

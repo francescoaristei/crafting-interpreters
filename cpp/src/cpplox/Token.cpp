@@ -28,3 +28,8 @@ TokenType Token::getType () {
 int Token::getLine () {
     return this -> line;
 }
+
+
+Object* Token::getLiteral () {
+    return this -> literal;
+}

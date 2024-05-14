@@ -10,6 +10,7 @@ class Double: public Object {
     public:
         Double(double value);
         string toString();
+        double getValue();
 
     private:
         double value;

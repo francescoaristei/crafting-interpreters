@@ -10,6 +10,7 @@ class Boolean: public Object {
     public:
         Boolean(bool value);
         string toString();
+        bool getValue();
 
     private:
         bool value;

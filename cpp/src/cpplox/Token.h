@@ -17,6 +17,7 @@ class Token {
         string getLexeme();
         TokenType getType();
         int getLine();
+        Object* getLiteral();
     private:
         TokenType type;
         string lexeme;

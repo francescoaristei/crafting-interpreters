@@ -1,14 +1,16 @@
-# include "Scanner.h"
 # include <stdio.h>
-# include "Token.h"
-# include "TokenType.h"
 # include <vector>
 # include <map>
-# include "Lox.h"
 # include <string>
+# include "Scanner.h"
+# include "Token.h"
+# include "TokenType.h"
+# include "Lox.h"
 # include "Object.h"
 # include "String.h"
 # include "Double.h"
+
+# include <iostream>
 
 using namespace std;
 
@@ -118,8 +120,7 @@ void Scanner::number () {
         }
     }
 
-    /* + 1 and - 1 are done to avoid the starting " and ending " */
-    double value = stod(this -> source.substr(this -> start, this -> current - this -> start - 1));
+    double value = stod(this -> source.substr(this -> start, this -> current - this -> start));
     Double *d = new Double(value);
     addToken(NUMBER, d);
 }
@@ -156,15 +157,7 @@ void Scanner::scanToken () {
         case '-': addToken(MINUS); break;
         case '+': addToken(PLUS); break;
         case ';': addToken(SEMICOLON); break;
-        case '*': 
-            /* closing section of multiline comments */
-            if (match('/')) {
-                break;
-            }
-            else {
-                addToken(STAR); break;
-            }
-            
+        case '*': addToken(STAR); break;
         case '!':
             addToken(match('=') ? BANG_EQUAL : BANG);
             break;
@@ -184,17 +177,6 @@ void Scanner::scanToken () {
                 then handled at the next iteration by the case '\n', incrementing the line variable
                 */
                 while (peek() != '\n' && !isAtEnd()) advance();
-            }
-            /* opening section of multiline comments */
-            else if (match('*')) {
-                /* move to the next char after '*' */
-                advance();
-                while ((peek() != '*') && !isAtEnd()) {
-                    if (peek() == '\n') {
-                        this -> line++;
-                    }
-                    advance();
-                }
             }
             else {
                 addToken(SLASH);
