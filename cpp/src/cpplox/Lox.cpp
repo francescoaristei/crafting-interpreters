@@ -14,8 +14,10 @@
 
 using namespace std;
 
-/* initialize the static member (must do it outside header file) */
+/* initialize the static members (must do it outside header file) */
 bool Lox::hadError = false;
+bool Lox::hadRuntimeError = false;
+//Interpreter<Object*> interpreter;
 
 void Lox::runFile (string path) {
     /* Reads the lox command from a file, save them and run. */
@@ -79,12 +81,14 @@ void Lox::run (string source) {
     /*for (int i = 0; i < tokens.size(); i++) {
         cout << tokens[i].toString() << "\n";
     }*/
-    //Parser<string> parser(tokens);
-    //Expr<Object*> *expression = parser.parse();
+    Parser parser(tokens);
+    //Expr *expression = parser.parse();
+    vector<Stmt*> statements = parser.parse();
     if (hadError)
         return;
 
-    //interpreter->interpret(expression);
+    Interpreter interpreter;
+    interpreter.interpret(statements);
 
     //AstPrinter<string> ast;
     //cout << ast.print(expression);
@@ -96,7 +100,7 @@ void Lox::error (int line, string msg) {
     report (line, "", msg);
 }
 
-void Lox::runtimeError (Interpreter<Object*>::RuntimeError error) {
+void Lox::runtimeError (Interpreter::RuntimeError error) {
     cout << error.getMessage() << "\n[line " << error.getToken().getLine() + "]";
     hadRuntimeError = true;
 }

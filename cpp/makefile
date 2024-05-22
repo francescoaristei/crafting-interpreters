@@ -7,7 +7,7 @@
 
 # compiler settings
 CXX := g++
-CXXFLAGS := -std=c++11 -Wall -Wextra -pedantic
+CXXFLAGS := -std=c++17 -Wall -Wextra -pedantic -Isrc/include
 LDFLAGS :=
 
 # dirs
@@ -55,7 +55,7 @@ clean:
 run_main: $(MAIN)
 	./$(MAIN)
 
-.PHONY: run_genast
-run_genast: $(MAIN_AST)
-	@mkdir -p $(AST_CLASSES_DIR)
-	./$(MAIN_AST) $(AST_CLASSES_DIR)
+#.PHONY: run_genast
+#run_genast: $(MAIN_AST)
+#	@mkdir -p $(AST_CLASSES_DIR)
+#	./$(MAIN_AST) $(AST_CLASSES_DIR)

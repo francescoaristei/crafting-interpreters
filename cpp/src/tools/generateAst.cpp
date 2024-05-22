@@ -66,8 +66,15 @@ void defineType (string outputdir, string &basename, string &classname, string &
         file_header << "# include " << "\"" << basename << ".h" << "\"" << "\n";
     }
 
+    if (basename == "Stmt") {
+        file_header << "# include " << "\"" << basename << ".h" << "\"" << "\n";
+    }
+
     //file_header << "# include " << "\"" << "Visitor.h" << "\"" << "\n";
-    file_header << "template <typename R> class Visitor;\n";
+    if (basename == "Expr")
+        file_header << "template <typename R> class VisitorExpr;\n";
+    else
+        file_header << "template <typename R> class VisitorStmt;\n";
 
     file_header << "\n";
     file_header << "template <typename R>\n";
@@ -99,7 +106,10 @@ void defineType (string outputdir, string &basename, string &classname, string &
 
     /* template function accept */
     //file_header << "       " << "template <typename R>\n";
-    file_header << "       " << "R accept (Visitor<R>& visitor);\n";
+    if (basename == "Expr")
+        file_header << "       " << "R accept (VisitorExpr<R>& visitor);\n";
+    else
+        file_header << "       " << "R accept (VisitorStmt<R>& visitor);\n";
     /* getter methods for the private fields */
     for (vector<string>::iterator itr = segList.begin(); itr != segList.end(); ++itr) {
         ltrim(*itr);
@@ -208,7 +218,11 @@ void defineType (string outputdir, string &basename, string &classname, string &
     }
 
     file_header << "template <typename R>\n";
-    file_header << "R " <<  classname << "<R>" << "::" << "accept (Visitor<R>& visitor) {\n";
+    if (basename == "Expr")
+        file_header << "R " <<  classname << "<R>" << "::" << "accept (VisitorExpr<R>& visitor) {\n";
+    else
+        file_header << "R " <<  classname << "<R>" << "::" << "accept (VisitorStmt<R>& visitor) {\n";
+
     file_header << "   return visitor.visit" << classname << basename << "(*this);\n";
     file_header << "}\n";
 
@@ -217,16 +231,16 @@ void defineType (string outputdir, string &basename, string &classname, string &
 
 }
 
-void defineVisitor (string outputdir, string &basename, vector<string> &expressions) {
-    string path = outputdir + "/" + "Visitor.h";
+void defineVisitorExpr (string outputdir, string &basename, vector<string> &expressions) {
+    string path = outputdir + "/" + "VisitorExpr.h";
     ofstream file (path);
     if (!file.is_open()) {
         cout << "Error opening the file, exiting...\n";
         exit(64);
     }
 
-    file << "# ifndef VISITOR\n";
-    file << "# define VISITOR\n";
+    file << "# ifndef VISITOREXPR\n";
+    file << "# define VISITOREXPR\n";
     for (vector<string>::iterator itr = expressions.begin(); itr != expressions.end(); ++itr) {
         size_t index = itr -> find(':');
         string type = itr -> substr(0, index);
@@ -238,14 +252,51 @@ void defineVisitor (string outputdir, string &basename, vector<string> &expressi
     string baseToLower = basename;
     transform(baseToLower.begin(), baseToLower.end(), baseToLower.begin(), ::tolower);
     file << "template <typename R>\n";
-    file << "class Visitor {\n";
+    file << "class VisitorExpr {\n";
     file << "   public:\n";
     for (vector<string>::iterator itr = expressions.begin(); itr != expressions.end(); ++itr) {
         size_t index = itr -> find(":");
         string type = itr -> substr(0, index);
         rtrim(type);
         /* define pure virtual methods */
-        file << "       virtual R visit" << type << basename + " (" << type << "<R>" << " " << baseToLower << ")"; 
+        file << "       virtual R visit" << type << basename + " (" << type << "<R>&" << " " << baseToLower << ")"; 
+        file << " = " << "0;" << "\n";
+    }
+
+    file << "};\n";
+    file << "# endif\n";
+    file.close();
+}
+
+void defineVisitorStmt (string outputdir, string &basename, vector<string> &expressions) {
+    string path = outputdir + "/" + "VisitorStmt.h";
+    ofstream file (path);
+    if (!file.is_open()) {
+        cout << "Error opening the file, exiting...\n";
+        exit(64);
+    }
+
+    file << "# ifndef VISITORSTMT\n";
+    file << "# define VISITORSTMT\n";
+    for (vector<string>::iterator itr = expressions.begin(); itr != expressions.end(); ++itr) {
+        size_t index = itr -> find(':');
+        string type = itr -> substr(0, index);
+        rtrim(type);
+        file << "# include " << "\"" << type << ".h" << "\"" << "\n"; 
+    }
+    file << "\n";
+    
+    string baseToLower = basename;
+    transform(baseToLower.begin(), baseToLower.end(), baseToLower.begin(), ::tolower);
+    file << "template <typename R>\n";
+    file << "class VisitorStmt {\n";
+    file << "   public:\n";
+    for (vector<string>::iterator itr = expressions.begin(); itr != expressions.end(); ++itr) {
+        size_t index = itr -> find(":");
+        string type = itr -> substr(0, index);
+        rtrim(type);
+        /* define pure virtual methods */
+        file << "       virtual R visit" << type << basename + " (" << type << "<R>&" << " " << baseToLower << ")"; 
         file << " = " << "0;" << "\n";
     }
 
@@ -265,26 +316,44 @@ void defineAst (string outputdir, string basename, vector<string> &expressions) 
 
     file << "# ifndef EXPR\n";
     file << "# define EXPR\n";
-    //file << "# include " << "\"" << "Visitor.h" << "\"" << "\n";
-    file << "template <typename R> class Visitor;\n";
+    //file << "# include " << "\"" << "VisitorExpr.h" << "\"" << "\n";
+    file << "template <typename R> class VisitorExpr;\n";
     file << "\n";
     file << "template <typename R>\n";
     file << "class " << basename << " {";
     file << "\n";
     //file << "   template <typename R>\n";
     file << "   public:\n";
-    file << "       virtual R accept (Visitor<R>& visitor);\n";
+    file << "       virtual R accept (VisitorExpr<R>& visitor) = 0;\n";
     file << "};\n";
     file << "\n";
-    /*file << "template <typename R>\n";
-    file << "R Expr<R>::accept (Visitor<R>& visitor) {\n";
-    file << "   return R();\n";
-    file << "};\n";
-    file << "\n";*/
     file << "# endif\n";
     file.close();
 
-    defineVisitor(outputdir, basename, expressions);
+
+    /*string path = outputdir + "/" + basename + ".h";
+    ofstream file(path);
+    if (!file.is_open()) {
+        cerr << "Could not open the file, exiting...\n";
+        exit(64);
+    }
+
+    file << "# ifndef STMT\n";
+    file << "# define STMT\n";
+    file << "template <typename R> class VisitorStmt;\n";
+    file << "\n";
+    file << "template <typename R>\n";
+    file << "class " << basename << " {";
+    file << "\n";
+    file << "   public:\n";
+    file << "       virtual R accept (VisitorStmt<Object*>& visitor) = 0;\n";
+    file << "};\n";
+    file << "\n";
+    file << "# endif\n";
+    file.close();*/
+
+    defineVisitorExpr(outputdir, basename, expressions);
+    //defineVisitorStmt(outputdir, basename, expressions);
 
     for (vector<string>::iterator itr = expressions.begin(); itr != expressions.end(); ++itr) {
         size_t index = itr -> find(':');
@@ -313,4 +382,8 @@ int main (int argc, char *argv[]) {
     expressions.push_back("Literal  : Object value");
     expressions.push_back("Unary    : Token op, Expr right");
     defineAst(outputdir, "Expr", expressions);
+    /*vector<string> statements;
+    statements.push_back("Expression    : Expr expression");
+    statements.push_back("Print         : Expr expression");
+    defineAst(outputdir, "Stmt", statements);*/
 }
