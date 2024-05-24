@@ -11,6 +11,9 @@
 # include "Stmt.h"
 # include "Print.h"
 # include "Parser.h"
+# include "Var.h"
+# include "Variable.h"
+# include "Block.h"
 # include <iostream>
 
 using namespace std;
@@ -93,6 +96,10 @@ Expr* Parser::primary() {
         return new Literal(previous().getLiteral());
     }
 
+    if (match(vector<TokenType>{IDENTIFIER})) {
+        return new Variable(previous());
+    }
+
     if (match(vector<TokenType>{LEFT_PAREN})) {
         Expr *expr = expression();
         consume(RIGHT_PAREN, "Expect ')' after expression.");
@@ -161,14 +168,44 @@ Expr* Parser::equality () {
     return expr;
 }
 
+Expr* Parser::assignment () {
+    Expr* expr = equality();
+
+    if (match({EQUAL})) {
+        Token equals = previous();
+        Expr *value = assignment();
+
+        if (Variable* v1 = dynamic_cast<Variable*>(expr)) {
+            Token name = dynamic_cast<Variable*>(expr)->getname();
+            return new Assign(name, value);
+        }
+
+        error(equals, "Invalid assignment target."); 
+    }
+    return expr;
+}
+
 /* expression --> equality */
 Expr* Parser::expression () {
-    return equality();
+    //return equality();
+    return assignment();
+}
+
+vector<Stmt*> Parser::block () {
+    vector<Stmt*> statements;
+
+    while (!check(RIGHT_BRACE) && !isAtEnd()) {
+        statements.push_back(declaration());
+    }
+
+    consume(RIGHT_BRACE, "Expect '}' after block.");
+    return statements;
 }
 
 /* statement --> exprStmt | printStmt */
 Stmt* Parser::statement () {
     if (match(vector<TokenType>{PRINT})) return printStatement();
+    if (match(vector<TokenType>{LEFT_BRACE})) return new Block(block()); 
 
     return expressionStatement();
 }
@@ -185,11 +222,33 @@ Stmt* Parser::expressionStatement () {
     return new Expression(expr);
 }
 
+Stmt* Parser::varDeclaration () {
+    Token name = consume(IDENTIFIER, "Expect variable name.");
+
+    Expr* initializer = NULL;
+    if (match(vector<TokenType>{EQUAL})) {
+        initializer = expression();
+    }
+
+    consume(SEMICOLON, "Expect ';' after variable declaration.");
+    return new Var(name, initializer);
+}
+
+Stmt* Parser::declaration () {
+    try {
+        if (match(vector<TokenType>{VAR})) return varDeclaration();
+        return statement();
+    } catch (ParseError error) {
+        synchronize();
+        return NULL;
+    }
+}
+
 vector<Stmt*> Parser::parse () {
     try {
         vector<Stmt*> statements;
         while (!isAtEnd()) {
-            statements.push_back(statement());
+            statements.push_back(declaration());
         }
         return statements;
     } catch (ParseError error) {

@@ -9,6 +9,10 @@ Grouping::Grouping (Expr *expression) {
     this ->  expression =  expression;
 };
 
+/*Grouping::~Grouping () {
+   delete expression;
+}*/
+
 Expr* Grouping::getexpression() {
    return this -> expression;
 }

@@ -1,6 +1,6 @@
 
-# ifndef TOKENTYPE
-# define TOKENTYPE
+# ifndef TOKENTYPE_CLASS
+# define TOKENTYPE_CLASS
 enum TokenType {
 
     /* Single-character tokens. */

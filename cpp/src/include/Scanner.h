@@ -1,6 +1,6 @@
 
-# ifndef SCANNER
-# define SCANNER
+# ifndef SCANNER_CLASS
+# define SCANNER_CLASS
 # include <vector>
 # include <map>
 # include <stdio.h>

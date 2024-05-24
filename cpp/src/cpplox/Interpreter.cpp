@@ -12,9 +12,12 @@
 # include "Boolean.h"
 # include "String.h"
 # include "Lox.h"
+# include "Block.h"
 # include <iostream>
+# include "Environment.h"
 # include "Interpreter.h"
 using namespace std;
+
 
 void Interpreter::execute (Stmt* stmt) {
     stmt -> accept(*this);
@@ -33,6 +36,19 @@ void Interpreter::interpret (vector<Stmt*> statements) {
     }
 }
 
+Object* Interpreter::visitVariableExpr (Variable& expr) {
+    return environment -> get(expr.getname());
+}
+
+void Interpreter::visitVarStmt (Var& stmt) {
+    Object* value = NULL;
+    if (stmt.getinitializer() != NULL) {
+        value = evaluate(stmt.getinitializer());
+    }
+
+    environment -> define(stmt.getToken().getLexeme(), value);
+}
+
 void Interpreter::visitExpressionStmt (Expression& stmt) {
     evaluate(stmt.getexpression());
 }
@@ -40,6 +56,25 @@ void Interpreter::visitExpressionStmt (Expression& stmt) {
 void Interpreter::visitPrintStmt (Print& stmt) {
     Object *value = evaluate(stmt.getexpression());
     cout << stringify(value);
+}
+
+void Interpreter::visitBlockStmt (Block& stmt) {
+    executeBlock(stmt.getstatements(), new Environment(environment));
+}
+
+void Interpreter::executeBlock (vector<Stmt*> statements, Environment *environment) {
+    Environment *previous = this -> environment;
+    this -> environment = environment;
+    for (vector<Stmt*>::iterator itr = statements.begin(); itr != statements.end(); ++itr) {
+        execute(*itr);
+    }
+    this -> environment = previous;
+}
+
+Object* Interpreter::visitAssignExpr (Assign& expr) {
+    Object* value = evaluate(expr.getvalue());
+    environment -> assign(expr.getname(), value);
+    return value;
 }
 
 Object* Interpreter::visitBinaryExpr (Binary& expr) {

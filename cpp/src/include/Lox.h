@@ -1,5 +1,5 @@
-# ifndef LOX
-# define LOX
+# ifndef LOX_CLASS
+# define LOX_CLASS
 # include <list>
 # include <fstream>
 # include <iostream>
@@ -12,7 +12,6 @@ using namespace std;
 class Lox {
     public:
         static bool hadError;
-        //static Interpreter<Object*> interpreter;
         static bool hadRuntimeError;
         static void runFile (string path);
         static void runPrompt ();

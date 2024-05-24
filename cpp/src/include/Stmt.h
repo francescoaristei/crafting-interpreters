@@ -1,5 +1,5 @@
-# ifndef STMT
-# define STMT
+# ifndef STMT_CLASS
+# define STMT_CLASS
 class VisitorStmtBase;
 
 # include <any>

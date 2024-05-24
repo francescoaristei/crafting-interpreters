@@ -10,6 +10,10 @@ Print::Print (Expr *expression) {
     this ->  expression =  expression;
 };
 
+/*Print::~Print () {
+   delete expression;
+}*/
+
 Expr* Print::getexpression() {
    return this -> expression;
 }

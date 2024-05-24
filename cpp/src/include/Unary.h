@@ -1,5 +1,5 @@
-# ifndef UNARY
-# define UNARY
+# ifndef UNARY_EXPR
+# define UNARY_EXPR
 # include "Token.h"
 # include "Expr.h"
 
@@ -11,6 +11,7 @@ using namespace std;
 class Unary: public Expr {
    public: 
        Unary (Token op, Expr *right);
+       //~Unary ();
        any accept (VisitorExprBase& visitor);
        Token  getop();
        Expr* getright();

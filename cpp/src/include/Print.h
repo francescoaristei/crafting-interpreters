@@ -1,5 +1,5 @@
-# ifndef PRINTSTMT
-# define PRINTSTMT
+# ifndef PRINT_STMT
+# define PRINT_STMT
 # include "Expr.h"
 # include "Stmt.h"
 class VisitorStmtBase;
@@ -10,6 +10,7 @@ using namespace std;
 class Print: public Stmt {
    public: 
        Print (Expr *expression);
+       ~Print ();
        any accept (VisitorStmtBase& visitor);
        Expr* getexpression();
    private: 

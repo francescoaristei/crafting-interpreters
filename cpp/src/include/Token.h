@@ -1,6 +1,6 @@
 
-# ifndef TOKEN
-# define TOKEN
+# ifndef TOKEN_CLASS
+# define TOKEN_CLASS
 # include "TokenType.h"
 # include <stdio.h>
 # include "Object.h"
@@ -13,6 +13,7 @@ class Token {
         Token (TokenType type, string lexeme, Object *literal, int line);
         /* default empty constructor if is not defined */
         Token () = default;
+        //~Token();
         string toString ();
         string getLexeme();
         TokenType getType();

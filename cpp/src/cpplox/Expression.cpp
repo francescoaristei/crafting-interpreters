@@ -11,6 +11,10 @@ Expression::Expression (Expr *expression) {
     this ->  expression =  expression;
 };
 
+/*Expression::~Expression () {
+   delete expression;
+}*/
+
 Expr* Expression::getexpression() {
    return this -> expression;
 }

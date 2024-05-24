@@ -1,5 +1,5 @@
-# ifndef BINARY
-# define BINARY
+# ifndef BINARY_EXPR
+# define BINARY_EXPR
 # include "Expr.h"
 # include "Token.h"
 # include "Expr.h"
@@ -12,6 +12,7 @@ class VisitorExprBase;
 class Binary: public Expr {
    public: 
        Binary (Expr *left, Token op, Expr *right);
+       ~Binary ();
        any accept (VisitorExprBase& visitor);
        Expr* getleft();
        Token  getop();

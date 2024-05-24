@@ -12,6 +12,10 @@ Token::Token (TokenType type, string lexeme, Object *literal, int line) {
     this -> literal = literal;
 }
 
+/*Token::~Token () {
+    delete literal;
+}*/
+
 string Token::getLexeme () {
     return this -> lexeme;
 }

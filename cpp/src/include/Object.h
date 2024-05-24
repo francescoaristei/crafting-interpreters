@@ -1,5 +1,5 @@
-# ifndef OBJECT
-# define OBJECT
+# ifndef OBJECT_CLASS
+# define OBJECT_CLASS
 
 # include <string>
 

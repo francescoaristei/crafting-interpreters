@@ -1,6 +1,5 @@
-
-# ifndef PARSER
-# define PARSER
+# ifndef PARSER_CLASS
+# define PARSER_CLASS
 # include <vector>
 # include "Token.h"
 # include "Expr.h"
@@ -13,7 +12,6 @@
 # include "Lox.h"
 # include "Stmt.h"
 # include "Print.h"
-
 # include <iostream>
 
 using namespace std;
@@ -32,6 +30,10 @@ class Parser {
         Stmt* statement();
         Stmt* printStatement();
         Stmt* expressionStatement();
+        Stmt* declaration();
+        Stmt* varDeclaration();
+        vector<Stmt*> block ();
+        Expr* assignment ();
         Expr* expression();
         Expr* equality();
         Expr* comparison();

@@ -1,5 +1,5 @@
-# ifndef INTERPRETER
-# define INTERPRETER
+# ifndef INTERPRETER_CLASS
+# define INTERPRETER_CLASS
 # include <string>
 # include "VisitorExpr.h"
 # include "VisitorStmt.h"
@@ -13,8 +13,12 @@
 # include "Double.h"
 # include "Boolean.h"
 # include "String.h"
-# include "Lox.h"
+# include "Var.h"
+# include "Variable.h"
+# include "Block.h"
 # include <iostream>
+
+class Environment;
 
 using namespace std;
 
@@ -25,10 +29,14 @@ class Interpreter: public VisitorExpr<Object*>, VisitorStmt<void> {
     public:
         void visitExpressionStmt (Expression& stmt);
         void visitPrintStmt (Print& stmt);
+        void visitVarStmt (Var& stmt);
+        void visitBlockStmt (Block& stmt);
+        Object* visitVariableExpr (Variable& expr);
         Object* visitBinaryExpr (Binary& expr);
         Object* visitGroupingExpr (Grouping& expr);
         Object* visitLiteralExpr (Literal& expr);
         Object* visitUnaryExpr (Unary& expr);
+        Object* visitAssignExpr (Assign& expr);
         void interpret (vector<Stmt*> statements);
         void execute (Stmt* stmt);
         class RuntimeError: public runtime_error {
@@ -48,11 +56,11 @@ class Interpreter: public VisitorExpr<Object*>, VisitorStmt<void> {
         Object* evaluate (Expr* expr);
         bool isTruthy(Object *object);
         bool isEqual(Object *a, Object *b);
+        Environment *environment;
         void checkNumberOperand(Token op, Object *operand);
         void checkNumberOperands(Token op, Object *operand1, Object *operand2);
         string stringify(Object *object);
+        void executeBlock (vector<Stmt*> statements, Environment *environment);
 };
-
-
 
 # endif

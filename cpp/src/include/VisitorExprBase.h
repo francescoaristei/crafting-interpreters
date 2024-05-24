@@ -4,6 +4,8 @@
 # include "Grouping.h"
 # include "Literal.h"
 # include "Unary.h"
+# include "Variable.h"
+# include "Assign.h"
 
 # include <any>
 using namespace std;
@@ -14,5 +16,7 @@ class VisitorExprBase {
        virtual any visitGroupingExprBase (Grouping& expr) = 0;
        virtual any visitLiteralExprBase (Literal& expr) = 0;
        virtual any visitUnaryExprBase (Unary& expr) = 0;
+       virtual any visitVariableExprBase (Variable& expr) = 0;
+       virtual any visitAssignExprBase (Assign& expr) = 0;
 };
 # endif

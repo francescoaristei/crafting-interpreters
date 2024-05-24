@@ -13,6 +13,11 @@ Binary::Binary (Expr *left, Token op, Expr *right) {
     this ->  right =  right;
 };
 
+/*Binary::~Binary () {
+   delete left;
+   delete right;
+}*/
+
 Expr* Binary::getleft() {
    return this -> left;
 }

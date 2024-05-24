@@ -12,6 +12,10 @@ Unary::Unary (Token op, Expr *right) {
     this ->  right =  right;
 };
 
+/*Unary::~Unary () {
+   delete right;
+}*/
+
 Token Unary::getop() {
    return this -> op;
 }

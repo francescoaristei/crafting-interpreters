@@ -5,6 +5,8 @@
 # include "Literal.h"
 # include "Unary.h"
 # include "VisitorExprBase.h"
+# include "Variable.h"
+# include "Assign.h"
 
 # include <any>
 using namespace std;
@@ -16,6 +18,8 @@ class VisitorExpr : public VisitorExprBase {
         virtual R visitGroupingExpr (Grouping& expr) = 0;
         virtual R visitLiteralExpr (Literal& expr) = 0;
         virtual R visitUnaryExpr (Unary& expr) = 0;
+        virtual R visitVariableExpr (Variable& expr) = 0;
+        virtual R visitAssignExpr (Assign& expr) = 0;
         
         any visitBinaryExprBase (Binary& expr) override {
             return static_cast<any>(visitBinaryExpr(expr));
@@ -28,6 +32,12 @@ class VisitorExpr : public VisitorExprBase {
         }
         any visitUnaryExprBase (Unary& expr) override {
             return static_cast<any>(visitUnaryExpr(expr));
+        }
+        any visitVariableExprBase (Variable& expr) override {
+            return static_cast<any>(visitVariableExpr(expr));
+        }
+        any visitAssignExprBase (Assign& expr) override {
+            return static_cast<any>(visitAssignExpr(expr));
         }
 };
 

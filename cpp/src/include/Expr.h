@@ -1,5 +1,5 @@
-# ifndef EXPR
-# define EXPR
+# ifndef EXPR_CLASS
+# define EXPR_CLASS
 class VisitorExprBase;
 
 # include <any>
