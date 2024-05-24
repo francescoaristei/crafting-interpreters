@@ -11,7 +11,7 @@ using namespace std;
 class Literal: public Expr {
    public: 
        Literal (Object *value);
-       ~Literal();
+       //~Literal();
        any accept (VisitorExprBase& visitor);
        Object*  getvalue();
    private: 

@@ -11,7 +11,7 @@ class VisitorExprBase;
 class Assign: public Expr {
    public: 
        Assign (Token name, Expr *value);
-       ~Assign ();
+       //~Assign ();
        any accept (VisitorExprBase& visitor);
        Token  getname();
        Expr* getvalue();

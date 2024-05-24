@@ -11,7 +11,7 @@ class VisitorStmtBase;
 class Expression: public Stmt {
    public: 
        Expression (Expr *expression);
-       ~Expression ();
+       //~Expression ();
        any accept (VisitorStmtBase& visitor);
        Expr* getexpression();
    private: 

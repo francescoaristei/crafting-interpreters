@@ -10,7 +10,7 @@ using namespace std;
 class Block: public Stmt {
    public: 
        Block (vector<Stmt*> statements);
-       ~Block ();
+       //~Block ();
        any accept (VisitorStmtBase& visitor);
        vector<Stmt*> getstatements();
    private: 

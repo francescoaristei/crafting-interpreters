@@ -10,7 +10,7 @@ using namespace std;
 class Print: public Stmt {
    public: 
        Print (Expr *expression);
-       ~Print ();
+       //~Print ();
        any accept (VisitorStmtBase& visitor);
        Expr* getexpression();
    private: 

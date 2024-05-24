@@ -12,7 +12,7 @@ class VisitorExprBase;
 class Binary: public Expr {
    public: 
        Binary (Expr *left, Token op, Expr *right);
-       ~Binary ();
+       //~Binary ();
        any accept (VisitorExprBase& visitor);
        Expr* getleft();
        Token  getop();
