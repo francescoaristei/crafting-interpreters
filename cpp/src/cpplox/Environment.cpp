@@ -12,7 +12,7 @@ Environment::Environment () {
     enclosing = NULL;
 }
 
-Environment::~Environment () {
+/*Environment::~Environment () {
     delete this -> enclosing;
 }
 
@@ -30,7 +30,7 @@ Environment& Environment::operator= (const Environment& rhs) {
 
 Environment::Environment (const Environment& other) : enclosing(NULL) {
     Environment *enclosing = other.enclosing;
-}
+}*/
 
 Environment::Environment (Environment *enclosing) {
     this -> enclosing = enclosing;

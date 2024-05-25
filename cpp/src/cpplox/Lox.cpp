@@ -17,7 +17,6 @@ using namespace std;
 /* initialize the static members (must do it outside header file) */
 bool Lox::hadError = false;
 bool Lox::hadRuntimeError = false;
-//Interpreter<Object*> interpreter;
 
 void Lox::runFile (string path) {
     /* Reads the lox command from a file, save them and run. */

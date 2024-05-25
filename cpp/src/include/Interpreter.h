@@ -17,8 +17,8 @@
 # include "Variable.h"
 # include "Block.h"
 # include <iostream>
-
-class Environment;
+# include "Environment.h"
+//class Environment;
 
 using namespace std;
 
@@ -56,7 +56,7 @@ class Interpreter: public VisitorExpr<Object*>, VisitorStmt<void> {
         Object* evaluate (Expr* expr);
         bool isTruthy(Object *object);
         bool isEqual(Object *a, Object *b);
-        Environment *environment;
+        Environment *environment = new Environment();
         void checkNumberOperand(Token op, Object *operand);
         void checkNumberOperands(Token op, Object *operand1, Object *operand2);
         string stringify(Object *object);

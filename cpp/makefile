@@ -7,7 +7,7 @@
 
 # compiler settings
 CXX := g++
-CXXFLAGS := -std=c++17 -Wall -Wextra -pedantic -Isrc/include
+CXXFLAGS := -std=c++17 -Wall -Wextra -pedantic -Isrc/include -g
 LDFLAGS :=
 
 # dirs
@@ -53,7 +53,7 @@ clean:
 
 .PHONY: run_main
 run_main: $(MAIN)
-	./$(MAIN)
+	./$(MAIN) ./test.lox
 
 #.PHONY: run_genast
 #run_genast: $(MAIN_AST)

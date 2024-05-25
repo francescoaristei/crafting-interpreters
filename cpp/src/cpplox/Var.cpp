@@ -7,7 +7,7 @@
 using namespace std;
 
 Var::Var (Token name, Expr *initializer) {
-    this ->  initializer =  initializer;
+    this -> initializer =  initializer;
     this -> name = name;
 };
 

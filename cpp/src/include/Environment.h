@@ -9,10 +9,10 @@ using namespace std;
 class Environment {
     public:
         Environment ();
-        ~Environment();
+        //~Environment();
         Environment (Environment *enclosing);
-        Environment& operator= (const Environment& rhs);
-        Environment (const Environment& other);
+        //Environment& operator= (const Environment& rhs);
+        //Environment (const Environment& other);
         void define (string name, Object *value);
         void assign (Token name, Object *value);
         Object* get (Token name);

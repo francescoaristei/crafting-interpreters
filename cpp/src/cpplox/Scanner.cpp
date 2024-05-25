@@ -102,7 +102,7 @@ void Scanner::string_token () {
 
     string value = this -> source.substr(start + 1, current - start - 2);
     String *str = new String(value);
-    addToken(STRING, str);
+    addToken(TokenType::STRING, str);
 }
 
 void Scanner::number () {
@@ -122,7 +122,7 @@ void Scanner::number () {
 
     double value = stod(this -> source.substr(this -> start, this -> current - this -> start));
     Double *d = new Double(value);
-    addToken(NUMBER, d);
+    addToken(TokenType::NUMBER, d);
 }
 
 void Scanner::identifier () {
@@ -130,7 +130,7 @@ void Scanner::identifier () {
     TokenType keyword;
     string id = this -> source.substr(start, current - start);
     if (keywords.find(id) == keywords.end()) {
-        keyword = IDENTIFIER;
+        keyword = TokenType::IDENTIFIER;
     }
     else {
         keyword = keywords[id];

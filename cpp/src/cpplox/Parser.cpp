@@ -28,7 +28,7 @@ Token Parser::previous () {
 }
 
 bool Parser::isAtEnd () {
-    return peek().getType() == EOF;
+    return peek().getType() == EOFF;
 }
 
 bool Parser::check (TokenType type) {
@@ -236,7 +236,9 @@ Stmt* Parser::varDeclaration () {
 
 Stmt* Parser::declaration () {
     try {
-        if (match(vector<TokenType>{VAR})) return varDeclaration();
+        if (match(vector<TokenType>{VAR})) 
+            return varDeclaration();
+
         return statement();
     } catch (ParseError error) {
         synchronize();
