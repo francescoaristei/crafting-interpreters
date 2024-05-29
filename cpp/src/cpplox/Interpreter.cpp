@@ -13,10 +13,22 @@
 # include "String.h"
 # include "Lox.h"
 # include "Block.h"
+# include "If.h"
+# include "While.h"
+# include "Logical.h"
 # include <iostream>
 # include "Environment.h"
 # include "Interpreter.h"
+# include "LoxCallable.h"
+# include "TimeNative.h"
+# include "LoxFunction.h"
+# include "Return.h"
 using namespace std;
+
+
+Interpreter::Interpreter() {
+    globals->define("clock", new TimeNative());
+}
 
 
 void Interpreter::execute (Stmt* stmt) {
@@ -62,6 +74,32 @@ void Interpreter::visitBlockStmt (Block& stmt) {
     executeBlock(stmt.getstatements(), new Environment(environment));
 }
 
+void Interpreter::visitIfStmt (If& stmt) {
+    if (isTruthy(evaluate(stmt.getexpression()))) {
+        execute(stmt.getThenBranch());
+    } else if (stmt.getElseBranch() != NULL) {
+        execute(stmt.getElseBranch());
+    }
+}
+
+void Interpreter::visitWhileStmt (While& stmt) {
+    while (isTruthy(evaluate(stmt.getexpression()))) {
+        execute(stmt.getstmt());
+    }
+}
+
+void Interpreter::visitFunctionStmt (Function& stmt) {
+    LoxFunction *function = new LoxFunction(&stmt, environment);
+    environment->define(stmt.getname().getLexeme(), function);
+}
+
+void Interpreter::visitReturnStmt (Return& stmt) {
+    Object* value = NULL;
+    if (stmt.getvalue() != NULL) value = evaluate(stmt.getvalue());
+
+    throw new Interpreter::ReturnEx(value);
+}
+
 void Interpreter::executeBlock (vector<Stmt*> statements, Environment *environment) {
     Environment *previous = this -> environment;
     this -> environment = environment;
@@ -69,6 +107,27 @@ void Interpreter::executeBlock (vector<Stmt*> statements, Environment *environme
         execute(*itr);
     }
     this -> environment = previous;
+}
+
+Object* Interpreter::visitCallExpr (Call& expr) {
+    Object *callee = evaluate(expr.getcallee());
+
+    vector<Object*> arguments;
+    for (vector<Expr*>::iterator itr = expr.getarguments().begin(); itr != expr.getarguments().end(); ++itr) {
+        arguments.push_back(evaluate(*itr));
+    }
+
+    if (LoxCallable* lc = dynamic_cast<LoxCallable*>(callee)) {
+        throw new Interpreter::RuntimeError(expr.getparen(),
+            "Can only call functions and classes.");
+    }
+
+    LoxCallable *function = dynamic_cast<LoxCallable*>(callee);
+
+    if (arguments.size() != function -> arity()) {
+        throw new Interpreter::RuntimeError (expr.getparen(), "Expected " + to_string(function -> arity()) + " arguments but got " + to_string(arguments.size()) + ".");
+    }
+    return function -> call(*this, arguments);
 }
 
 Object* Interpreter::visitAssignExpr (Assign& expr) {
@@ -121,6 +180,18 @@ Object* Interpreter::visitBinaryExpr (Binary& expr) {
 
     /* should be unreachable */
     return NULL;
+}
+
+Object* Interpreter::visitLogicalExpr (Logical& expr) {
+    Object *left = evaluate(expr.getleft());
+
+    if (expr.getop().getType() == TokenType::OR) {
+        if (isTruthy(left)) return left;
+    } else { /* if AND expr and left part is false */
+        if (!isTruthy(left)) return left;
+    }
+
+    return evaluate(expr.getright());
 }
 
 Object* Interpreter::visitGroupingExpr (Grouping& expr) {

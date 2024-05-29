@@ -6,6 +6,8 @@
 # include "Unary.h"
 # include "Variable.h"
 # include "Assign.h"
+# include "Logical.h"
+# include "Call.h"
 
 # include <any>
 using namespace std;
@@ -18,5 +20,7 @@ class VisitorExprBase {
        virtual any visitUnaryExprBase (Unary& expr) = 0;
        virtual any visitVariableExprBase (Variable& expr) = 0;
        virtual any visitAssignExprBase (Assign& expr) = 0;
+       virtual any visitLogicalExprBase (Logical& expr) = 0;
+       virtual any visitCallExprBase (Call& expr) = 0;
 };
 # endif

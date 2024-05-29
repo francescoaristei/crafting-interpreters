@@ -14,6 +14,10 @@
 # include "Var.h"
 # include "Variable.h"
 # include "Block.h"
+# include "If.h"
+# include "While.h"
+# include "Call.h"
+# include "Return.h"
 # include <iostream>
 
 using namespace std;
@@ -109,6 +113,35 @@ Expr* Parser::primary() {
     throw error(peek(), "Expect expression.");
 }
 
+Expr* Parser::call () {
+    Expr *expr = primary();
+
+    while (true) {
+        if (match(vector<TokenType>{LEFT_PAREN})) {
+            expr = finishCall(expr);
+        } else {
+            break;
+        }
+    }
+    return expr;
+}
+
+Expr* Parser::finishCall (Expr *callee) {
+    vector<Expr*> arguments;
+
+    if (!check(RIGHT_PAREN)) {
+        do {
+            if (arguments.size() >= 255) {
+                error(peek(), "Can't have more than 255 arguments.");
+            }
+            arguments.push_back(expression());
+        } while (match(vector<TokenType>{COMMA}));
+    }
+    Token paren = consume(RIGHT_PAREN, "Expect ')' after arguments.");
+
+    return new Call(callee, paren, arguments);
+}
+
 /* unary --> ("!" | "-") unary | primary */
 Expr* Parser::unary () {
     if (match(vector<TokenType>{BANG, MINUS})) {
@@ -117,7 +150,7 @@ Expr* Parser::unary () {
         return new Unary(op, right);
     }
 
-    return primary();
+    return call();
 }
 
 Expr* Parser::factor () {
@@ -168,8 +201,30 @@ Expr* Parser::equality () {
     return expr;
 }
 
+
+Expr* Parser::andexpr () {
+    Expr *expr = equality();
+
+    while (match(vector<TokenType>{AND})) {
+        Token op = previous();
+        Expr *right = equality();
+        expr = new Logical(expr, op, right);
+    }
+
+    return expr;
+}
+
+Expr* Parser::orexpr () {
+    Expr *expr = andexpr();
+    while (match(vector<TokenType>{OR})) {
+        Token op = previous();
+        Expr *right = andexpr();
+        expr = new Logical(expr, op, right);
+    }
+}
+
 Expr* Parser::assignment () {
-    Expr* expr = equality();
+    Expr* expr = orexpr();
 
     if (match({EQUAL})) {
         Token equals = previous();
@@ -185,7 +240,7 @@ Expr* Parser::assignment () {
     return expr;
 }
 
-/* expression --> equality */
+/* expression --> assignment */
 Expr* Parser::expression () {
     //return equality();
     return assignment();
@@ -202,12 +257,80 @@ vector<Stmt*> Parser::block () {
     return statements;
 }
 
-/* statement --> exprStmt | printStmt */
 Stmt* Parser::statement () {
+    if (match(vector<TokenType>{RETURN})) return returnStatement();
+    if (match(vector<TokenType>{FOR})) return forStatement();
+    if (match(vector<TokenType>{WHILE})) return whileStatement();
+    if (match(vector<TokenType>{IF})) return ifStatement();
     if (match(vector<TokenType>{PRINT})) return printStatement();
     if (match(vector<TokenType>{LEFT_BRACE})) return new Block(block()); 
 
     return expressionStatement();
+}
+
+/* implemented from already available syntax */
+Stmt* Parser::forStatement () {
+    consume(LEFT_PAREN, "Expect '(' after 'for'.");
+
+    Stmt *initializer;
+    if (match(vector<TokenType>{SEMICOLON})) {
+        initializer = NULL;
+    } else if (match(vector<TokenType>{VAR})) {
+        initializer = varDeclaration();
+    } else {
+        initializer = expressionStatement();
+    }
+
+    Expr *condition = NULL;
+    if (!check(SEMICOLON)) {
+        condition = expression();
+    }
+    consume (SEMICOLON, "Expect ';' after loop condition.");
+
+    Expr *increment = NULL;
+    if (!check(RIGHT_PAREN)) {
+        increment = expression();
+    }
+    consume (RIGHT_PAREN, "Expect ')' after for clauses.");
+
+    Stmt *body = statement();
+
+    if (increment != NULL) {
+        body = new Block(
+            vector<Stmt*>{body, new Expression(increment)}
+        );
+    }
+
+    if (condition == NULL) condition = new Literal(new Boolean(true));
+    body = new While (condition, body);
+
+    if (initializer != NULL) {
+        body = new Block(vector<Stmt*>{initializer, body});
+    }
+    return body;
+}
+
+Stmt* Parser::whileStatement () {
+    consume(LEFT_PAREN, "Expect '(' after 'while'.");
+    Expr *condition = expression();
+    consume(RIGHT_PAREN, "Expect ')' after condition.");
+    Stmt *body = statement();
+
+    return new While(condition, body);
+}
+
+Stmt* Parser::ifStatement () {
+    consume(LEFT_PAREN, "Expect '(' after 'if'.");
+    Expr *condition = expression();
+    consume (RIGHT_PAREN, "Expect ')' after if condition.");
+
+    Stmt *thenBranch = statement();
+    Stmt *elseBranch = NULL;
+    if (match(vector<TokenType>{ELSE})) {
+        elseBranch = statement();
+    }
+
+    return new If(condition, thenBranch, elseBranch);
 }
 
 Stmt* Parser::printStatement () {
@@ -222,6 +345,16 @@ Stmt* Parser::expressionStatement () {
     return new Expression(expr);
 }
 
+Stmt* Parser::returnStatement () {
+    Token keyword = previous();
+    Expr* value = NULL;
+    if (!check(SEMICOLON)) {
+        value = expression();
+    }
+    consume(SEMICOLON, "Expect ';' after return value");
+    return new Return(keyword, value);
+}
+
 Stmt* Parser::varDeclaration () {
     Token name = consume(IDENTIFIER, "Expect variable name.");
 
@@ -234,8 +367,30 @@ Stmt* Parser::varDeclaration () {
     return new Var(name, initializer);
 }
 
+Stmt* Parser::function (string kind) {
+    Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
+    consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
+    vector<Token> parameters;
+    if (!check(RIGHT_PAREN)) {
+        do {
+            if (parameters.size() >= 255) {
+                error(peek(), "Can't have more than 255 parameters.");
+            }
+            parameters.push_back(consume(IDENTIFIER, "Expect parameter name.")); 
+        } while (match(vector<TokenType>{COMMA}));
+    }
+
+    consume(RIGHT_PAREN, "Expect ')' after parameters.");
+
+    consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
+    vector<Stmt*> body = block();
+    return new Function(name, parameters, body);
+}
+
 Stmt* Parser::declaration () {
     try {
+        if (match(vector<TokenType>{FUN}))
+            return function("function");
         if (match(vector<TokenType>{VAR})) 
             return varDeclaration();
 
