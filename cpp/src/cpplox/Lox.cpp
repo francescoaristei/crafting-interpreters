@@ -11,6 +11,7 @@
 # include "Parser.h"
 # include "Expr.h"
 # include "AstPrinter.h"
+# include "Resolver.h"
 
 using namespace std;
 
@@ -87,6 +88,12 @@ void Lox::run (string source) {
         return;
 
     Interpreter interpreter;
+    
+    Resolver resolver(interpreter);
+    resolver.resolve(statements);
+
+    if (hadError) return;
+
     interpreter.interpret(statements);
 
     //AstPrinter<string> ast;

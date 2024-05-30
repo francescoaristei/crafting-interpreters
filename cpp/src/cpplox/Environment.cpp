@@ -53,6 +53,32 @@ Object* Environment::get (Token name) {
         "Undefined variable '" + name.getLexeme() + "'.");
 }
 
+void Environment::assignAt (int distance, Token name, Object *value) {
+    ancestor(distance)->getValues()[name.getLexeme()] = value;
+}
+
+Environment* Environment::getEnclosing () {
+    return this -> enclosing;
+}
+
+map<string, Object*> Environment::getValues () {
+    return this -> values;
+}
+
+Environment* Environment::ancestor (int distance) {
+    Environment *environment = this;
+
+    for (int i = 0; i < distance; i++) {
+        environment = environment->getEnclosing();
+    }
+
+    return environment;
+}
+
+Object* Environment::getAt (int distance, string name) {
+    return ancestor(distance)->getValues()[name];
+}
+
 /* assigment needs to be distinguished from the definition (done by define)*/
 void Environment::assign (Token name, Object *value) {
     map<string, Object*>::iterator it = values.find(name.getLexeme());

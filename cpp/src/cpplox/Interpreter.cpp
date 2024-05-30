@@ -35,6 +35,10 @@ void Interpreter::execute (Stmt* stmt) {
     stmt -> accept(*this);
 }
 
+void Interpreter::resolve (Expr *expr, int depth) {
+    locals[expr] = depth;
+}
+
 void Interpreter::interpret (vector<Stmt*> statements) {
     try {
         //Object *value = evaluate(expression);
@@ -49,7 +53,17 @@ void Interpreter::interpret (vector<Stmt*> statements) {
 }
 
 Object* Interpreter::visitVariableExpr (Variable& expr) {
-    return environment -> get(expr.getname());
+    //return environment -> get(expr.getname());
+    return lookUpVariable(expr.getname(), &expr);
+}
+
+Object* Interpreter::lookUpVariable (Token name, Expr *expr) {
+    if (locals.find(expr) != locals.end()) {
+        int distance = locals[expr];
+        return environment->getAt(distance, name.getLexeme());
+    } else {
+        return globals->get(name);
+    }
 }
 
 void Interpreter::visitVarStmt (Var& stmt) {
@@ -132,7 +146,15 @@ Object* Interpreter::visitCallExpr (Call& expr) {
 
 Object* Interpreter::visitAssignExpr (Assign& expr) {
     Object* value = evaluate(expr.getvalue());
-    environment -> assign(expr.getname(), value);
+
+    if (locals.find(&expr) != locals.end()) {
+        int distance = locals[&expr];
+        environment->assignAt(distance, expr.getname(), value);
+    } else {
+        globals->assign(expr.getname(), value);
+    }
+    
+    //environment -> assign(expr.getname(), value);
     return value;
 }
 

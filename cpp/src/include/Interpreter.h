@@ -1,6 +1,7 @@
 # ifndef INTERPRETER_CLASS
 # define INTERPRETER_CLASS
 # include <string>
+# include <map>
 # include "VisitorExpr.h"
 # include "VisitorStmt.h"
 # include "Expr.h"
@@ -51,6 +52,7 @@ class Interpreter: public VisitorExpr<Object*>, VisitorStmt<void> {
         Object* visitCallExpr (Call& expr);
         void interpret (vector<Stmt*> statements);
         void execute (Stmt* stmt);
+        void resolve (Expr *expr, int depth);
         void executeBlock (vector<Stmt*> statements, Environment *environment);
         Environment *globals = new Environment();
         class RuntimeError: public runtime_error {
@@ -85,6 +87,8 @@ class Interpreter: public VisitorExpr<Object*>, VisitorStmt<void> {
         void checkNumberOperand(Token op, Object *operand);
         void checkNumberOperands(Token op, Object *operand1, Object *operand2);
         string stringify(Object *object);
+        map<Expr*, int> locals;
+        Object* lookUpVariable(Token name, Expr *expr);
 };
 
 # endif
