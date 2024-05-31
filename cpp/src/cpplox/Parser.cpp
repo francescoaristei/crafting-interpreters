@@ -18,6 +18,10 @@
 # include "While.h"
 # include "Call.h"
 # include "Return.h"
+# include "Class.h"
+# include "Get.h"
+# include "Set.h"
+# include "This.h"
 # include <iostream>
 
 using namespace std;
@@ -104,6 +108,10 @@ Expr* Parser::primary() {
         return new Variable(previous());
     }
 
+    if (match(vector<TokenType>{THIS})) {
+        return new This(previous());
+    }
+
     if (match(vector<TokenType>{LEFT_PAREN})) {
         Expr *expr = expression();
         consume(RIGHT_PAREN, "Expect ')' after expression.");
@@ -119,6 +127,10 @@ Expr* Parser::call () {
     while (true) {
         if (match(vector<TokenType>{LEFT_PAREN})) {
             expr = finishCall(expr);
+        } else if (match(vector<TokenType>{DOT})) {
+            Token name = consume (IDENTIFIER,
+                "Expect property name after '.'.");
+            expr = new Get(expr, name);
         } else {
             break;
         }
@@ -233,6 +245,9 @@ Expr* Parser::assignment () {
         if (Variable* v1 = dynamic_cast<Variable*>(expr)) {
             Token name = dynamic_cast<Variable*>(expr)->getname();
             return new Assign(name, value);
+        } else if (Get* g1 = dynamic_cast<Get*>(expr)) {
+            Get *get = dynamic_cast<Get*>(expr);
+            return new Set(get->getobject(), get->getname(), value);
         }
 
         error(equals, "Invalid assignment target."); 
@@ -355,6 +370,20 @@ Stmt* Parser::returnStatement () {
     return new Return(keyword, value);
 }
 
+Stmt* Parser::classDeclaration () {
+    Token name = consume(IDENTIFIER, "Expect class name.");
+    consume(LEFT_BRACE, "Expect '{' before class body.");
+
+    vector<Stmt*> methods;
+    while (!check(RIGHT_BRACE) && !isAtEnd()) {
+        methods.push_back(function("method"));
+    }
+
+    consume(RIGHT_BRACE, "Expect '}' after class body");
+
+    return new Class(name, methods);
+}
+
 Stmt* Parser::varDeclaration () {
     Token name = consume(IDENTIFIER, "Expect variable name.");
 
@@ -389,6 +418,8 @@ Stmt* Parser::function (string kind) {
 
 Stmt* Parser::declaration () {
     try {
+        if (match(vector<TokenType>{CLASS}))
+            return classDeclaration();
         if (match(vector<TokenType>{FUN}))
             return function("function");
         if (match(vector<TokenType>{VAR})) 

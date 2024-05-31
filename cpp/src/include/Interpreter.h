@@ -22,6 +22,11 @@
 # include "Logical.h"
 # include "Function.h"
 # include "Return.h"
+# include "Class.h"
+# include "Get.h"
+# include "Set.h"
+# include "Call.h"
+# include "This.h"
 # include <iostream>
 # include "Environment.h"
 //class Environment;
@@ -42,6 +47,7 @@ class Interpreter: public VisitorExpr<Object*>, VisitorStmt<void> {
         void visitWhileStmt (While& stmt);
         void visitFunctionStmt (Function& stmt);
         void visitReturnStmt (Return& stmt);
+        void visitClassStmt (Class& stmt);
         Object* visitVariableExpr (Variable& expr);
         Object* visitBinaryExpr (Binary& expr);
         Object* visitGroupingExpr (Grouping& expr);
@@ -50,6 +56,9 @@ class Interpreter: public VisitorExpr<Object*>, VisitorStmt<void> {
         Object* visitAssignExpr (Assign& expr);
         Object* visitLogicalExpr (Logical& expr);
         Object* visitCallExpr (Call& expr);
+        Object* visitGetExpr (Get& expr);
+        Object* visitSetExpr (Set& expr);
+        Object* visitThisExpr (This& expr);
         void interpret (vector<Stmt*> statements);
         void execute (Stmt* stmt);
         void resolve (Expr *expr, int depth);

@@ -19,6 +19,10 @@
 # include "Literal.h"
 # include "Logical.h"
 # include "Unary.h"
+# include "Class.h"
+# include "Get.h"
+# include "Set.h"
+# include "This.h"
 # include <vector>
 # include <map>
 # include <stack>
@@ -150,8 +154,35 @@ void Resolver::visitReturnStmt (Return& stmt) {
         //Lox.error(stmt.getKeyword(), "Can't return from top-level code");
     }
     if (stmt.getvalue() != NULL) {
+        if (currentFunction == FunctionType::INITIALIZER) {
+            // STILL LOX ERROR
+            //Lox.error(stmt.getname(), "Can't return a value from an initializer.");
+        }
         resolve(stmt.getvalue());
     }
+}
+
+void Resolver::visitClassStmt (Class& stmt) {
+    ClassType enclosingClass = currentClass;
+    currentClass = ClassType::CLASS;
+
+    declare(stmt.getname());
+    define(stmt.getname());
+
+    beginScope();
+    scopes.top()["this"] = true;
+
+    for (vector<Stmt*>::iterator itr = stmt.getmethods().begin(); itr != stmt.getmethods().end(); ++itr) {
+        FunctionType declaration = FunctionType::METHOD;
+        if (dynamic_cast<Function*>(*itr)->getname().getLexeme() == "init") {
+            declaration = FunctionType::INITIALIZER;
+        }
+        resolveFunction(dynamic_cast<Function*>(*itr), declaration);
+    }
+
+    endScope();
+
+    currentClass = enclosingClass;
 }
 
 void Resolver::visitWhileStmt (While& stmt) {
@@ -200,4 +231,22 @@ void Resolver::visitLogicalExpr (Logical& expr) {
 
 void Resolver::visitUnaryExpr (Unary& expr) {
     resolve(expr.getright());
+}
+
+void Resolver::visitGetExpr (Get& expr) {
+    resolve(expr.getobject());
+}
+
+void Resolver::visitSetExpr (Set& expr) {
+    resolve(expr.getvalue());
+    resolve(expr.getobject());
+}
+
+void Resolver::visitThisExpr (This& expr) {
+
+    if (currentClass == ClassType::NONE) {
+        // LOX ERROR PROBLEM
+        //Lox.error(expr.getname(), "Can't use 'this' outside of a class");
+    }
+    resolveLocal(&expr, expr.getname());
 }

@@ -36,6 +36,7 @@ class Parser {
         Stmt* returnStatement();
         Stmt* declaration();
         Stmt* varDeclaration();
+        Stmt* classDeclaration();
         Stmt* function(string kind);
         vector<Stmt*> block ();
         Expr* assignment ();

@@ -9,6 +9,9 @@
 # include "Assign.h"
 # include "Logical.h"
 # include "Call.h"
+# include "Get.h"
+# include "Set.h"
+# include "This.h"
 
 # include <any>
 using namespace std;
@@ -24,6 +27,9 @@ class VisitorExpr : public VisitorExprBase {
         virtual R visitAssignExpr (Assign& expr) = 0;
         virtual R visitLogicalExpr (Logical& expr) = 0;
         virtual R visitCallExpr (Call& expr) = 0;
+        virtual R visitGetExpr (Get& expr) = 0;
+        virtual R visitSetExpr (Set& expr) = 0;
+        virtual R visitThisExpr (This& expr) = 0;
         
         any visitBinaryExprBase (Binary& expr) override {
             return static_cast<any>(visitBinaryExpr(expr));
@@ -48,6 +54,15 @@ class VisitorExpr : public VisitorExprBase {
         }
         any visitCallExprBase (Call& expr) override {
             return static_cast<any>(visitCallExpr(expr));
+        }
+        any visitGetExprBase (Get& expr) override {
+            return static_cast<any>(visitGetExpr(expr));
+        }
+        any visitSetExprBase (Set& expr) override {
+            return static_cast<any>(visitSetExpr(expr));
+        }
+        any visitThisExprBase (This& expr) override {
+            return static_cast<any>(visitThisExpr(expr));
         }
 };
 

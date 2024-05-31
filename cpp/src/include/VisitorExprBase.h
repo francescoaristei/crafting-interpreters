@@ -8,7 +8,9 @@
 # include "Assign.h"
 # include "Logical.h"
 # include "Call.h"
-
+# include "Get.h"
+# include "Set.h"
+# include "This.h"
 # include <any>
 using namespace std;
 
@@ -22,5 +24,8 @@ class VisitorExprBase {
        virtual any visitAssignExprBase (Assign& expr) = 0;
        virtual any visitLogicalExprBase (Logical& expr) = 0;
        virtual any visitCallExprBase (Call& expr) = 0;
+       virtual any visitGetExprBase (Get& expr) = 0;
+       virtual any visitSetExprBase (Set& expr) = 0;
+       virtual any visitThisExprBase (This& expr) = 0;
 };
 # endif

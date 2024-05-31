@@ -8,6 +8,7 @@
 # include "While.h"
 # include "Function.h"
 # include "Return.h"
+# include "Class.h"
 # include <any>
 using namespace std;
 
@@ -21,5 +22,6 @@ class VisitorStmtBase {
        virtual any visitWhileStmtBase (While& stmt) = 0;
        virtual any visitFunctionStmtBase (Function& stmt) = 0;
        virtual any visitReturnStmtBase (Return& stmt) = 0;
+       virtual any visitClassStmtBase (Class& stmt) = 0;
 };
 # endif

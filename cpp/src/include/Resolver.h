@@ -27,6 +27,10 @@
 # include "Literal.h"
 # include "Logical.h"
 # include "Unary.h"
+# include "Class.h"
+# include "Get.h"
+# include "Set.h"
+# include "This.h"
 
 class Resolver: public VisitorExpr<void>, VisitorStmt<void> {
     public:
@@ -39,6 +43,7 @@ class Resolver: public VisitorExpr<void>, VisitorStmt<void> {
         void visitPrintStmt (Print& stmt);
         void visitReturnStmt (Return& stmt);
         void visitWhileStmt (While& stmt);
+        void visitClassStmt (Class& stmt);
         void visitVariableExpr (Variable& expr);
         void visitAssignExpr (Assign& expr);
         void visitBinaryExpr (Binary& expr);
@@ -47,10 +52,14 @@ class Resolver: public VisitorExpr<void>, VisitorStmt<void> {
         void visitLiteralExpr (Literal& expr);
         void visitLogicalExpr (Logical& expr);
         void visitUnaryExpr (Unary& expr);
+        void visitGetExpr (Get& expr);
+        void visitSetExpr (Set& expr);
+        void visitThisExpr (This& expr);
         void resolve (vector<Stmt*> statements);
 
     private:
-        enum FunctionType {NONE, FUNCTION};
+        enum FunctionType {NONE, FUNCTION, METHOD, INITIALIZER};
+        enum ClassType {NONE, CLASS};
         stack<map<string, bool>> scopes;
         Interpreter interpreter;
         void resolve (Stmt *stmt);
@@ -62,6 +71,7 @@ class Resolver: public VisitorExpr<void>, VisitorStmt<void> {
         void resolveLocal (Expr *expr, Token name);
         void resolveFunction (Function *function, FunctionType type);
         FunctionType currentFunction = FunctionType::NONE;
+        ClassType currentClass = ClassType::NONE;
 
 };
 

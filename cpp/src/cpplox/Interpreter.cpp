@@ -23,6 +23,12 @@
 # include "TimeNative.h"
 # include "LoxFunction.h"
 # include "Return.h"
+# include "Class.h"
+# include "Call.h"
+# include "Get.h"
+# include "Set.h"
+# include "LoxClass.h"
+# include "LoxInstance.h"
 using namespace std;
 
 
@@ -103,7 +109,7 @@ void Interpreter::visitWhileStmt (While& stmt) {
 }
 
 void Interpreter::visitFunctionStmt (Function& stmt) {
-    LoxFunction *function = new LoxFunction(&stmt, environment);
+    LoxFunction *function = new LoxFunction(&stmt, environment, false);
     environment->define(stmt.getname().getLexeme(), function);
 }
 
@@ -112,6 +118,22 @@ void Interpreter::visitReturnStmt (Return& stmt) {
     if (stmt.getvalue() != NULL) value = evaluate(stmt.getvalue());
 
     throw new Interpreter::ReturnEx(value);
+}
+
+void Interpreter::visitClassStmt (Class& stmt) {
+    environment->define(stmt.getname().getLexeme(), NULL);
+    //LoxClass *klass = new LoxClass(stmt.getname().getLexeme());
+    //environment->assign(stmt.getname(), klass);
+
+    map<string, LoxFunction*> methods;
+
+    for (vector<Stmt*>::iterator itr = stmt.getmethods().begin(); itr != stmt.getmethods().end(); ++itr) {
+        bool isInit = dynamic_cast<Function*>((*itr))->getname().getLexeme() == "init" ? true : false;
+        LoxFunction *function = new LoxFunction(dynamic_cast<Function*>(*itr), environment, isInit);
+    }
+
+    LoxClass *klass = new LoxClass (stmt.getname().getLexeme(), methods);
+    environment->assign(stmt.getname(), klass);
 }
 
 void Interpreter::executeBlock (vector<Stmt*> statements, Environment *environment) {
@@ -237,6 +259,30 @@ Object* Interpreter::visitUnaryExpr (Unary& expr) {
 
     /* unreachable */
     return NULL;
+}
+
+Object* Interpreter::visitGetExpr (Get& expr) {
+    Object *object = evaluate(expr.getobject());
+    if (Object* o1 = dynamic_cast<Object*>(object))
+        return dynamic_cast<LoxInstance*>(object)->get(expr.getname());
+
+    throw new Interpreter::RuntimeError (expr.getname(), "Only instances have properties.");
+}
+
+Object* Interpreter::visitSetExpr (Set& expr) {
+    Object *object = evaluate(expr.getobject());
+    LoxInstance *o1 = dynamic_cast<LoxInstance*>(object);
+    if (!o1) {
+        throw new Interpreter::RuntimeError (expr.getname(), "Only instances have fields.");
+    }
+    Object *value = evaluate(expr.getvalue());
+    dynamic_cast<LoxInstance*>(object)->set(expr.getname(), value);
+    return value;
+
+}
+
+Object* Interpreter::visitThisExpr (This& expr) {
+    return lookUpVariable(expr.getname(), &expr);
 }
 
 bool Interpreter::isEqual (Object *a, Object *b) {

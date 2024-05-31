@@ -9,6 +9,7 @@
 # include "While.h"
 # include "Function.h"
 # include "Return.h"
+# include "Class.h"
 # include <any>
 # include <type_traits>
 using namespace std;
@@ -24,6 +25,7 @@ class VisitorStmt: public VisitorStmtBase {
         virtual R visitWhileStmt (While& stmt) = 0;
         virtual R visitFunctionStmt (Function& stmt) = 0;
         virtual R visitReturnStmt (Return& stmt) = 0;
+        virtual R visitClassStmt (Class& stmt) = 0;
 
         any visitExpressionStmtBase (Expression& stmt) override {
             return static_cast<any>(visitExpressionStmt(stmt));
@@ -55,6 +57,10 @@ class VisitorStmt: public VisitorStmtBase {
         any visitReturnStmtBase (Return& stmt) override {
             return static_cast<any>(visitReturnStmt(stmt));
         }
+
+        any visitClassStmtBase (Class& stmt) override {
+            return static_cast<any>(visitClassStmt(stmt));
+        }
 };
 
 
@@ -69,6 +75,7 @@ class VisitorStmt<void>: public VisitorStmtBase {
         virtual void visitWhileStmt (While& stmt) = 0;
         virtual void visitFunctionStmt (Function& stmt) = 0;
         virtual void visitReturnStmt (Return& stmt) = 0;
+        virtual void visitClassStmt (Class& stmt) = 0;
 
         any visitPrintStmtBase (Print& stmt) override {
             visitPrintStmt(stmt);
@@ -107,6 +114,10 @@ class VisitorStmt<void>: public VisitorStmtBase {
 
         any visitReturnStmtBase (Return& stmt) {
             visitReturnStmt(stmt);
+            return {};
+        }
+        any visitClassStmtBase (Class& stmt) {
+            visitClassStmt(stmt);
             return {};
         }
 };
