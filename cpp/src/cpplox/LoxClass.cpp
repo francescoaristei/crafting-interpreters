@@ -9,9 +9,10 @@
 
 using namespace std;
 
-LoxClass::LoxClass (string name, map<string, LoxFunction*> methods) {
+LoxClass::LoxClass (string name, LoxClass *superclass, map<string, LoxFunction*> methods) {
     this -> name = name;
     this -> methods = methods;
+    this -> superclass = superclass;
 }
 
 string LoxClass::getname () {
@@ -36,6 +37,10 @@ Object* LoxClass::call (Interpreter interpreter, vector<Object*> arguments) {
 LoxFunction* LoxClass::findMethod (string name) {
     if (methods.find(name) != methods.end()) {
         return methods[name];
+    }
+
+    if (superclass != NULL) {
+        return superclass->findMethod(name);
     }
 }
 

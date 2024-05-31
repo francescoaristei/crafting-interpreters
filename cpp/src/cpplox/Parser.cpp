@@ -22,6 +22,7 @@
 # include "Get.h"
 # include "Set.h"
 # include "This.h"
+# include "Super.h"
 # include <iostream>
 
 using namespace std;
@@ -102,6 +103,14 @@ Expr* Parser::primary() {
 
     if (match(vector<TokenType>{NUMBER, STRING})) {
         return new Literal(previous().getLiteral());
+    }
+
+    if (match(vector<TokenType>{SUPER})) {
+        Token keyword = previous();
+        consume(DOT, "Expect '.' after 'super'.");
+        Token method = consume(IDENTIFIER,
+                "Expect superclass method name.");
+        return new Super(keyword, method);
     }
 
     if (match(vector<TokenType>{IDENTIFIER})) {
@@ -372,6 +381,13 @@ Stmt* Parser::returnStatement () {
 
 Stmt* Parser::classDeclaration () {
     Token name = consume(IDENTIFIER, "Expect class name.");
+
+    Variable *superclass = NULL;
+    if (match(vector<TokenType>{LESS})) {
+        consume(IDENTIFIER, "Expect superclass name.");
+        superclass = new Variable(previous());
+    }
+
     consume(LEFT_BRACE, "Expect '{' before class body.");
 
     vector<Stmt*> methods;
@@ -381,7 +397,7 @@ Stmt* Parser::classDeclaration () {
 
     consume(RIGHT_BRACE, "Expect '}' after class body");
 
-    return new Class(name, methods);
+    return new Class(name, superclass, methods);
 }
 
 Stmt* Parser::varDeclaration () {

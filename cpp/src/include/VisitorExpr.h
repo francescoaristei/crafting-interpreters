@@ -12,6 +12,7 @@
 # include "Get.h"
 # include "Set.h"
 # include "This.h"
+# include "Super.h"
 
 # include <any>
 using namespace std;
@@ -30,6 +31,7 @@ class VisitorExpr : public VisitorExprBase {
         virtual R visitGetExpr (Get& expr) = 0;
         virtual R visitSetExpr (Set& expr) = 0;
         virtual R visitThisExpr (This& expr) = 0;
+        virtual R visitSuperExpr (Super& expr) = 0;
         
         any visitBinaryExprBase (Binary& expr) override {
             return static_cast<any>(visitBinaryExpr(expr));
@@ -63,6 +65,9 @@ class VisitorExpr : public VisitorExprBase {
         }
         any visitThisExprBase (This& expr) override {
             return static_cast<any>(visitThisExpr(expr));
+        }
+        any visitSuperExprBase (Super& expr) override {
+            return static_cast<any>(visitSuperExpr(expr));
         }
 };
 

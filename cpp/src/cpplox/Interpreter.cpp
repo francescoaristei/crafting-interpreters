@@ -27,6 +27,8 @@
 # include "Call.h"
 # include "Get.h"
 # include "Set.h"
+# include "This.h"
+# include "Super.h"
 # include "LoxClass.h"
 # include "LoxInstance.h"
 using namespace std;
@@ -121,9 +123,22 @@ void Interpreter::visitReturnStmt (Return& stmt) {
 }
 
 void Interpreter::visitClassStmt (Class& stmt) {
+    Object *superclass = NULL;
+    if (stmt.getsuperclass() != NULL) {
+        superclass = evaluate(stmt.getsuperclass());
+        LoxClass* lc = dynamic_cast<LoxClass*>(superclass);
+        if (!(lc)) {
+            throw new RuntimeError (stmt.getsuperclass()->getname(), "Superclass must be a class.");
+        }
+    }
     environment->define(stmt.getname().getLexeme(), NULL);
     //LoxClass *klass = new LoxClass(stmt.getname().getLexeme());
     //environment->assign(stmt.getname(), klass);
+
+    if (stmt.getsuperclass() != NULL) {
+        environment = new Environment(environment);
+        environment->define("super", superclass);
+    }
 
     map<string, LoxFunction*> methods;
 
@@ -132,7 +147,11 @@ void Interpreter::visitClassStmt (Class& stmt) {
         LoxFunction *function = new LoxFunction(dynamic_cast<Function*>(*itr), environment, isInit);
     }
 
-    LoxClass *klass = new LoxClass (stmt.getname().getLexeme(), methods);
+    LoxClass *klass = new LoxClass (stmt.getname().getLexeme(), dynamic_cast<LoxClass*>(superclass), methods);
+
+    if (superclass != NULL) {
+        environment = environment->getEnclosing();
+    }
     environment->assign(stmt.getname(), klass);
 }
 
@@ -283,6 +302,20 @@ Object* Interpreter::visitSetExpr (Set& expr) {
 
 Object* Interpreter::visitThisExpr (This& expr) {
     return lookUpVariable(expr.getname(), &expr);
+}
+
+Object* Interpreter::visitSuperExpr (Super& expr) {
+    int distance = locals[&expr];
+    LoxClass *superclass = dynamic_cast<LoxClass*>(environment->getAt(distance, "super"));
+
+    LoxInstance *object = dynamic_cast<LoxInstance*>(environment->getAt(distance - 1, "this"));
+
+    LoxFunction *method = superclass->findMethod(expr.getmethod().getLexeme());
+
+    if (method == NULL) {
+        throw new Interpreter::RuntimeError (expr.getmethod(), "undefined property '" + expr.getmethod().getLexeme() + "'.");
+    }
+    return method->bind(object);
 }
 
 bool Interpreter::isEqual (Object *a, Object *b) {

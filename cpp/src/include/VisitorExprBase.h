@@ -11,6 +11,7 @@
 # include "Get.h"
 # include "Set.h"
 # include "This.h"
+# include "Super.h"
 # include <any>
 using namespace std;
 
@@ -27,5 +28,6 @@ class VisitorExprBase {
        virtual any visitGetExprBase (Get& expr) = 0;
        virtual any visitSetExprBase (Set& expr) = 0;
        virtual any visitThisExprBase (This& expr) = 0;
+       virtual any visitSuperExprBase (Super& expr) = 0;
 };
 # endif

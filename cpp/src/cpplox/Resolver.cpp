@@ -169,6 +169,21 @@ void Resolver::visitClassStmt (Class& stmt) {
     declare(stmt.getname());
     define(stmt.getname());
 
+    if (stmt.getsuperclass() != NULL && stmt.getname().getLexeme() == stmt.getsuperclass()->getname().getLexeme()) {
+        // LOX ERROR TO FIX
+        //Lox.error(stmt.getsuperclass()->getname(), "A class can't be inherit from itself.");
+    }
+
+    if (stmt.getsuperclass() != NULL) {
+        currentClass = ClassType::SUBCLASS;
+        resolve(stmt.getsuperclass());
+    }
+
+    if (stmt.getsuperclass() != NULL) {
+        beginScope();
+        scopes.top()["super"] = true;
+    }
+
     beginScope();
     scopes.top()["this"] = true;
 
@@ -181,6 +196,8 @@ void Resolver::visitClassStmt (Class& stmt) {
     }
 
     endScope();
+
+    if (stmt.getsuperclass() != NULL) endScope();
 
     currentClass = enclosingClass;
 }
@@ -249,4 +266,14 @@ void Resolver::visitThisExpr (This& expr) {
         //Lox.error(expr.getname(), "Can't use 'this' outside of a class");
     }
     resolveLocal(&expr, expr.getname());
+}
+
+void Resolver::visitSuperExpr (Super& expr) {
+    if (currentClass == ClassType::NONE) {
+        // LOX ERROR
+        // Lox.error(expr.getkeyword(), "Can't use 'super' outside of a class.");
+    } else if (currentClass != ClassType::SUBCLASS) {
+        // Lox.error(expr.getkeyword(), "Can't use 'super' ina  class with no superclass.");
+    }
+    resolveLocal (&expr, expr.getkeyword());
 }

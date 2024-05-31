@@ -15,7 +15,7 @@ using namespace std;
 
 class LoxClass: public LoxCallable {
     public:
-        LoxClass (string name, map<string, LoxFunction*> methods);
+        LoxClass (string name, LoxClass *superclass, map<string, LoxFunction*> methods);
         string toString ();
         Object* call (Interpreter interpreter, vector<Object*> arguments);
         int arity ();
@@ -25,6 +25,7 @@ class LoxClass: public LoxCallable {
     private:
         string name;
         map<string, LoxFunction*> methods;
+        LoxClass *superclass;
 
 };
 

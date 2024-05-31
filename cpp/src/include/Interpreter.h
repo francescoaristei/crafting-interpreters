@@ -27,6 +27,7 @@
 # include "Set.h"
 # include "Call.h"
 # include "This.h"
+# include "Super.h"
 # include <iostream>
 # include "Environment.h"
 //class Environment;
@@ -59,6 +60,7 @@ class Interpreter: public VisitorExpr<Object*>, VisitorStmt<void> {
         Object* visitGetExpr (Get& expr);
         Object* visitSetExpr (Set& expr);
         Object* visitThisExpr (This& expr);
+        Object* visitSuperExpr (Super& expr);
         void interpret (vector<Stmt*> statements);
         void execute (Stmt* stmt);
         void resolve (Expr *expr, int depth);

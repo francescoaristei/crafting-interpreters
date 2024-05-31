@@ -3,14 +3,16 @@
 # include "Class.h"
 # include "VisitorStmtBase.h"
 # include "Function.h"
+# include "Variable.h"
 # include <vector>
 
 # include <any>
 using namespace std;
 
-Class::Class (Token name, vector<Stmt*> methods) {
+Class::Class (Token name, Variable *superclass, vector<Stmt*> methods) {
     this ->  name = name;
     this -> methods = methods;
+    this -> superclass = superclass;
 };
 
 /*Print::~Print () {
@@ -23,6 +25,10 @@ vector<Stmt*> Class::getmethods() {
 
 Token Class::getname () {
     return this -> name;
+}
+
+Variable* Class::getsuperclass () {
+   return this -> superclass;
 }
 
 any Class::accept (VisitorStmtBase& visitor) {

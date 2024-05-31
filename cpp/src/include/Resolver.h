@@ -31,6 +31,7 @@
 # include "Get.h"
 # include "Set.h"
 # include "This.h"
+# include "Super.h"
 
 class Resolver: public VisitorExpr<void>, VisitorStmt<void> {
     public:
@@ -55,11 +56,12 @@ class Resolver: public VisitorExpr<void>, VisitorStmt<void> {
         void visitGetExpr (Get& expr);
         void visitSetExpr (Set& expr);
         void visitThisExpr (This& expr);
+        void visitSuperExpr (Super& expr);
         void resolve (vector<Stmt*> statements);
 
     private:
         enum FunctionType {NONE, FUNCTION, METHOD, INITIALIZER};
-        enum ClassType {NONE, CLASS};
+        enum ClassType {NONE, CLASS, SUBCLASS};
         stack<map<string, bool>> scopes;
         Interpreter interpreter;
         void resolve (Stmt *stmt);
