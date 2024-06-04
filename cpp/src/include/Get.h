@@ -10,7 +10,10 @@ class VisitorExprBase;
 class Get: public Expr {
    public: 
        Get (Expr *object, Token name);
-       //~Grouping ();
+       ~Get ();
+       Get& operator= (const Get& other);
+       Get (const Get& other);
+       Get* deepcopy ();
        any accept (VisitorExprBase& visitor);
        Expr* getobject();
        Token getname ();

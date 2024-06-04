@@ -12,9 +12,30 @@ Return::Return (Token keyword, Expr *value) {
     this -> keyword = keyword;
 };
 
-/*Print::~Print () {
-   delete expression;
-}*/
+Return::~Return () {
+   delete value;
+}
+
+Return& Return::operator= (const Return& other) {
+   if (this == &other) {
+      return *this;
+   }
+
+   keyword = other.keyword;
+   delete value;
+   value = nullptr;
+   value = other.value->deepcopy();
+   return *this;
+}
+
+Return::Return (const Return& other) {
+   value = other.value;
+   keyword = other.keyword;
+}
+
+Return* Return::deepcopy () {
+   return new Return(*this);
+}
 
 Expr* Return::getvalue() {
    return this -> value;

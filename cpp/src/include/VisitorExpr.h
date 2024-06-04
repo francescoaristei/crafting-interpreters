@@ -71,4 +71,75 @@ class VisitorExpr : public VisitorExprBase {
         }
 };
 
+
+template <>
+class VisitorExpr<void>: public VisitorExprBase {
+    public:
+        virtual void visitBinaryExpr (Binary& expr) = 0;
+        virtual void visitGroupingExpr (Grouping& expr) = 0;
+        virtual void visitLiteralExpr (Literal& expr) = 0;
+        virtual void visitUnaryExpr (Unary& expr) = 0;
+        virtual void visitVariableExpr (Variable& expr) = 0;
+        virtual void visitAssignExpr (Assign& expr) = 0;
+        virtual void visitLogicalExpr (Logical& expr) = 0;
+        virtual void visitCallExpr (Call& expr) = 0;
+        virtual void visitGetExpr (Get& expr) = 0;
+        virtual void visitSetExpr (Set& expr) = 0;
+        virtual void visitThisExpr (This& expr) = 0;
+        virtual void visitSuperExpr (Super& expr) = 0;
+
+        any visitBinaryExprBase (Binary& expr) override {
+            visitBinaryExpr(expr);
+            return {};
+        }
+
+        any visitGroupingExprBase (Grouping& expr) override {
+            visitGroupingExpr(expr);
+            return {};
+        }
+        any visitLiteralExprBase (Literal& expr) override {
+            visitLiteralExpr(expr);
+            return {};
+        }
+        any visitUnaryExprBase (Unary& expr) override {
+            visitUnaryExpr(expr);
+            return {};
+        }
+        any visitVariableExprBase (Variable& expr) override {
+            visitVariableExpr(expr);
+            return {};
+        }
+        any visitAssignExprBase (Assign& expr) override {
+            visitAssignExpr(expr);
+            return {};
+        }
+        any visitLogicalExprBase (Logical& expr) override {
+            visitLogicalExpr(expr);
+            return {};
+        }
+        any visitCallExprBase (Call& expr) override {
+            visitCallExpr(expr);
+            return {};
+        }
+
+        any visitGetExprBase (Get& expr) override {
+            visitGetExpr(expr);
+            return {};
+        }
+        any visitSetExprBase (Set& expr) override {
+            visitSetExpr(expr);
+            return {};
+        }
+
+        any visitThisExprBase (This& expr) override {
+            visitThisExpr(expr);
+            return {};
+        }
+        any visitSuperExprBase (Super& expr) override {
+            visitSuperExpr(expr);
+            return {};
+        }
+
+};
+
 # endif

@@ -12,7 +12,10 @@ using namespace std;
 class Function: public Stmt {
    public: 
        Function (Token name, vector<Token> params, vector<Stmt*> body);
-       //~Print ();
+       ~Function ();
+       Function& operator= (const Function& other);
+       Function (const Function& other);
+       Function* deepcopy ();
        any accept (VisitorStmtBase& visitor);
        Token getname();
        vector<Token> getparams();

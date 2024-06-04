@@ -10,7 +10,10 @@ class VisitorExprBase;
 class Grouping: public Expr {
    public: 
        Grouping (Expr *expression);
-       //~Grouping ();
+       ~Grouping ();
+       Grouping& operator= (const Grouping& other);
+       Grouping (const Grouping& other);
+       Grouping* deepcopy ();
        any accept (VisitorExprBase& visitor);
        Expr* getexpression();
    private: 

@@ -11,6 +11,8 @@ class Double: public Object {
         Double(double value);
         string toString();
         double getValue();
+        Double (const Double& other);
+        Double* deepcopy();
 
     private:
         double value;

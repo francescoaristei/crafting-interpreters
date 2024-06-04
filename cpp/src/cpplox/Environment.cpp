@@ -12,25 +12,29 @@ Environment::Environment () {
     enclosing = NULL;
 }
 
-/*Environment::~Environment () {
+Environment::~Environment () {
     delete this -> enclosing;
 }
 
-Environment& Environment::operator= (const Environment& rhs) {
-    if (this == &rhs) {
+Environment& Environment::operator= (const Environment& other) {
+    if (this == &other) {
         return *this;
     }
 
     delete enclosing;
-    enclosing = NULL;
+    enclosing = nullptr;
 
-    Environment *enclosing = rhs.enclosing;
+    enclosing = other.enclosing->deepcopy();
     return *this;
 }
 
-Environment::Environment (const Environment& other) : enclosing(NULL) {
-    Environment *enclosing = other.enclosing;
-}*/
+Environment::Environment (const Environment& other) {
+    enclosing = other.enclosing;
+}
+
+Environment* Environment::deepcopy () {
+    return new Environment(*this);
+}
 
 Environment::Environment (Environment *enclosing) {
     this -> enclosing = enclosing;

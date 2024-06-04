@@ -13,10 +13,36 @@ Binary::Binary (Expr *left, Token op, Expr *right) {
     this ->  right =  right;
 };
 
-/*Binary::~Binary () {
+Binary::~Binary () {
    delete left;
    delete right;
-}*/
+}
+
+Binary& Binary::operator= (const Binary& other) {
+   if (&other == this)
+      return *this;
+   
+   op = other.op;
+   delete left;
+   delete right;
+   left = nullptr;
+   right = nullptr;
+   left = other.left->deepcopy();
+   right = other.right->deepcopy();
+
+   return *this;
+}
+
+Binary::Binary (const Binary& other) {
+   op = other.op;
+   left = other.left;
+   right = other.right;
+}
+
+
+Binary* Binary::deepcopy () {
+   return new Binary(*this);
+}
 
 Expr* Binary::getleft() {
    return this -> left;

@@ -8,6 +8,14 @@ Double::Double (double value) {
     this -> value = value;
 }
 
+Double::Double (const Double& other) {
+    value = other.value;
+}
+
+Double* Double::deepcopy () {
+    return new Double(*this);
+}
+
 string Double::toString () {
     ostringstream strs;
     strs << this -> value;

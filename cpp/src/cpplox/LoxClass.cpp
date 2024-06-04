@@ -15,6 +15,47 @@ LoxClass::LoxClass (string name, LoxClass *superclass, map<string, LoxFunction*>
     this -> superclass = superclass;
 }
 
+LoxClass::~LoxClass () {
+   delete superclass;
+   for (map<string, LoxFunction*>::iterator itr = methods.begin(); itr != methods.end(); ++itr) {
+        delete itr->second;
+    }
+}
+
+LoxClass& LoxClass::operator= (const LoxClass& other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    name = other.name;
+    delete superclass;
+    superclass = nullptr;
+    superclass = other.superclass->deepcopy();
+    
+    for (map<string, LoxFunction*>::iterator itr = methods.begin(); itr != methods.end(); ++itr) {
+        delete itr->second;
+        itr->second = nullptr;
+    }
+
+    map<string, LoxFunction*> newmap;
+
+    for (map<string, LoxFunction*>::const_iterator itr = other.methods.begin(); itr != other.methods.end(); ++itr) {
+        newmap[itr->first] = itr->second->deepcopy();
+    }
+    methods = newmap;
+    return *this;
+}
+
+LoxClass::LoxClass (const LoxClass& other) {
+    name = other.name;
+    superclass = other.superclass;
+    methods = other.methods;
+}
+
+LoxClass* LoxClass::deepcopy () {
+    return new LoxClass(*this);
+}
+
 string LoxClass::getname () {
     return this -> name;
 }

@@ -3,7 +3,6 @@
 using namespace std;
 
 /* 
-TO-DO: remove class template and implement type erasure to obtain same behavior as having accept as a template virtual function (not allowed) 
 type erasure: https://www.artima.com/articles/on-the-tension-between-object-oriented-and-generic-programming-in-c
 */
 

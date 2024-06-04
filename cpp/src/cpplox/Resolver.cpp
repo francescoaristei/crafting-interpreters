@@ -149,7 +149,7 @@ void Resolver::visitPrintStmt (Print& stmt) {
 }
 
 void Resolver::visitReturnStmt (Return& stmt) {
-    if (currentFunction == FunctionType::NONE) {
+    if (currentFunction == FunctionType::NONE_F) {
         // LOX ERRRO TO FIX
         //Lox.error(stmt.getKeyword(), "Can't return from top-level code");
     }
@@ -261,7 +261,7 @@ void Resolver::visitSetExpr (Set& expr) {
 
 void Resolver::visitThisExpr (This& expr) {
 
-    if (currentClass == ClassType::NONE) {
+    if (currentClass == ClassType::NONE_C) {
         // LOX ERROR PROBLEM
         //Lox.error(expr.getname(), "Can't use 'this' outside of a class");
     }
@@ -269,7 +269,7 @@ void Resolver::visitThisExpr (This& expr) {
 }
 
 void Resolver::visitSuperExpr (Super& expr) {
-    if (currentClass == ClassType::NONE) {
+    if (currentClass == ClassType::NONE_C) {
         // LOX ERROR
         // Lox.error(expr.getkeyword(), "Can't use 'super' outside of a class.");
     } else if (currentClass != ClassType::SUBCLASS) {

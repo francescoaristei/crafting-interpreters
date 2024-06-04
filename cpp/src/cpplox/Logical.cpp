@@ -13,10 +13,35 @@ Logical::Logical (Expr *left, Token op, Expr *right) {
     this ->  right =  right;
 };
 
-/*Binary::~Binary () {
+Logical::~Logical () {
    delete left;
    delete right;
-}*/
+}
+
+Logical& Logical::operator= (const Logical& other) {
+   if (this == &other) {
+      return *this;
+   }
+
+   op = other.op;
+   delete left;
+   left = nullptr;
+   left = other.left->deepcopy();
+   delete right;
+   right = nullptr;
+   right = other.right->deepcopy();
+   return *this;
+}
+
+Logical::Logical (const Logical& other) {
+   op = other.op;
+   left = other.left;
+   right = other.right;
+}
+
+Logical* Logical::deepcopy () {
+   return new Logical(*this);
+}
 
 Expr* Logical::getleft() {
    return this -> left;

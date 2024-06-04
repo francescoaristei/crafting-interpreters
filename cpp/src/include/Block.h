@@ -10,7 +10,10 @@ using namespace std;
 class Block: public Stmt {
    public: 
        Block (vector<Stmt*> statements);
-       //~Block ();
+       ~Block ();
+       Block& operator= (const Block& other);
+       Block (const Block& other);
+       Block* deepcopy ();
        any accept (VisitorStmtBase& visitor);
        vector<Stmt*> getstatements();
    private: 

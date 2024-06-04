@@ -10,9 +10,28 @@ Print::Print (Expr *expression) {
     this ->  expression =  expression;
 };
 
-/*Print::~Print () {
+Print::~Print () {
    delete expression;
-}*/
+}
+
+Print& Print::operator= (const Print& other) {
+   if (this == &other) {
+      return *this;
+   }
+
+   delete expression;
+   expression = nullptr;
+   expression = other.expression->deepcopy();
+   return *this;
+}
+
+Print::Print (const Print& other) {
+   expression = other.expression;
+}
+
+Print* Print::deepcopy () {
+   return new Print(*this);
+}
 
 Expr* Print::getexpression() {
    return this -> expression;

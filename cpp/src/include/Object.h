@@ -10,6 +10,7 @@ class Object {
         virtual ~Object() {};
         /* overriden by subclasses */
         virtual string toString() {return "object";};
+        virtual Object* deepcopy () {};
 };
 
 # endif

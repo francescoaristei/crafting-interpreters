@@ -60,8 +60,8 @@ class Resolver: public VisitorExpr<void>, VisitorStmt<void> {
         void resolve (vector<Stmt*> statements);
 
     private:
-        enum FunctionType {NONE, FUNCTION, METHOD, INITIALIZER};
-        enum ClassType {NONE, CLASS, SUBCLASS};
+        enum FunctionType {NONE_F, FUNCTION, METHOD, INITIALIZER};
+        enum ClassType {NONE_C, CLASS, SUBCLASS};
         stack<map<string, bool>> scopes;
         Interpreter interpreter;
         void resolve (Stmt *stmt);
@@ -72,8 +72,8 @@ class Resolver: public VisitorExpr<void>, VisitorStmt<void> {
         void define (Token name);
         void resolveLocal (Expr *expr, Token name);
         void resolveFunction (Function *function, FunctionType type);
-        FunctionType currentFunction = FunctionType::NONE;
-        ClassType currentClass = ClassType::NONE;
+        FunctionType currentFunction = FunctionType::NONE_F;
+        ClassType currentClass = ClassType::NONE_C;
 
 };
 

@@ -11,7 +11,10 @@ using namespace std;
 class Literal: public Expr {
    public: 
        Literal (Object *value);
-       //~Literal();
+       ~Literal();
+       Literal& operator= (const Literal& other);
+       Literal (const Literal& other);
+       Literal* deepcopy ();
        any accept (VisitorExprBase& visitor);
        Object*  getvalue();
    private: 

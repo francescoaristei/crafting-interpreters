@@ -11,10 +11,6 @@ Super::Super (Token keyword, Token method) {
     this -> method = method;
 };
 
-/*Grouping::~Grouping () {
-   delete expression;
-}*/
-
 Token Super::getkeyword () {
     return this -> keyword;
 }

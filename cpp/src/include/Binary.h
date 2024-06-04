@@ -12,7 +12,10 @@ class VisitorExprBase;
 class Binary: public Expr {
    public: 
        Binary (Expr *left, Token op, Expr *right);
-       //~Binary ();
+       ~Binary ();
+       Binary& operator= (const Binary& other);
+       Binary (const Binary& other);
+       Binary* deepcopy ();
        any accept (VisitorExprBase& visitor);
        Expr* getleft();
        Token  getop();

@@ -12,9 +12,30 @@ Unary::Unary (Token op, Expr *right) {
     this ->  right =  right;
 };
 
-/*Unary::~Unary () {
+Unary::~Unary () {
    delete right;
-}*/
+}
+
+Unary& Unary::operator= (const Unary& other) {
+   if (this == &other) {
+      return *this;
+   }
+
+   op = other.op;
+   delete right;
+   right = nullptr;
+   right = other.right->deepcopy();
+   return *this;
+}
+
+Unary::Unary (const Unary& other) {
+   op = other.op;
+   right = other.right;
+}
+
+Unary* Unary::deepcopy () {
+   return new Unary(*this);
+}
 
 Token Unary::getop() {
    return this -> op;

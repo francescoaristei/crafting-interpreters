@@ -10,9 +10,6 @@ This::This (Token name) {
     this -> name = name;
 };
 
-/*Grouping::~Grouping () {
-   delete expression;
-}*/
 
 Token This::getname () {
     return this -> name;

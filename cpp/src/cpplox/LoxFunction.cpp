@@ -4,11 +4,41 @@
 # include "LoxFunction.h"
 # include "Environment.h"
 # include "LoxInstance.h"
+# include "Function.h"
 
 LoxFunction::LoxFunction (Function *declaration, Environment *closure, bool isInitializer) {
     this -> declaration = declaration;
     this -> closure = closure;
     this -> isInitializer = isInitializer;
+}
+
+LoxFunction::~LoxFunction () {
+   delete declaration;
+   delete closure;
+}
+
+LoxFunction& LoxFunction::operator= (const LoxFunction& other) {
+    if (this == &other) {
+        return *this;
+    }
+    isInitializer = other.isInitializer;
+    delete declaration;
+    declaration = nullptr;
+    declaration = other.declaration->deepcopy();
+    delete closure;
+    closure = nullptr;
+    closure = other.closure->deepcopy();
+    return *this;
+}
+
+LoxFunction::LoxFunction (const LoxFunction& other) {
+    declaration = other.declaration;
+    closure = other.closure;
+    isInitializer = other.isInitializer;
+}
+
+LoxFunction* LoxFunction::deepcopy () {
+    return new LoxFunction(*this);
 }
 
 Object* LoxFunction::call (Interpreter interpreter, vector<Object*> arguments) {
@@ -39,6 +69,9 @@ LoxFunction* LoxFunction::bind (LoxInstance *instance) {
     return new LoxFunction(declaration, environment, isInitializer);
 }
 
+Function* LoxFunction::getdeclaration () {
+    return this -> declaration;
+}
 
 string LoxFunction::toString() {
     return "<fn" + getdeclaration()->getname().getLexeme() + ">";

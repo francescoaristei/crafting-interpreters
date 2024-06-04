@@ -7,10 +7,15 @@
 # include "LoxCallable.h"
 # include "Environment.h"
 # include "LoxInstance.h"
+# include "Function.h"
 
 class LoxFunction: public LoxCallable {
     public:
         LoxFunction(Function *declaration, Environment *environment, bool isInitializer);
+        ~LoxFunction ();
+        LoxFunction& operator= (const LoxFunction& other);
+        LoxFunction (const LoxFunction& other);
+        LoxFunction* deepcopy ();
         Object* call(Interpreter interpreter, vector<Object*>arguments);
         int arity();
         Function* getdeclaration();
