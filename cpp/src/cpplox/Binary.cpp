@@ -13,7 +13,7 @@ Binary::Binary (Expr *left, Token op, Expr *right) {
     this ->  right =  right;
 };
 
-Binary::~Binary () {
+/*Binary::~Binary () {
    delete left;
    delete right;
 }
@@ -42,7 +42,7 @@ Binary::Binary (const Binary& other) {
 
 Binary* Binary::deepcopy () {
    return new Binary(*this);
-}
+}*/
 
 Expr* Binary::getleft() {
    return this -> left;

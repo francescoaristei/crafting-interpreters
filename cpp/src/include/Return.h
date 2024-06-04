@@ -11,10 +11,10 @@ using namespace std;
 class Return: public Stmt {
    public: 
        Return (Token keyword, Expr *value);
-       ~Return ();
+       /*~Return ();
        Return& operator= (const Return& other);
        Return (const Return& other);
-       Return* deepcopy ();
+       Return* deepcopy ();*/
        any accept (VisitorStmtBase& visitor);
        Expr* getvalue();
        Token getkeyword();

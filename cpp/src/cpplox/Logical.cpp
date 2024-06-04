@@ -13,7 +13,7 @@ Logical::Logical (Expr *left, Token op, Expr *right) {
     this ->  right =  right;
 };
 
-Logical::~Logical () {
+/*Logical::~Logical () {
    delete left;
    delete right;
 }
@@ -41,7 +41,7 @@ Logical::Logical (const Logical& other) {
 
 Logical* Logical::deepcopy () {
    return new Logical(*this);
-}
+}*/
 
 Expr* Logical::getleft() {
    return this -> left;

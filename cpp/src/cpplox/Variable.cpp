@@ -15,13 +15,13 @@ Token Variable::getname() {
    return this -> name;
 }
 
-Variable::Variable (const Variable& other) {
+/*Variable::Variable (const Variable& other) {
    name = other.name;
 }
 
 Variable* Variable::deepcopy () {
    return new Variable(*this);
-}
+}*/
 
 any Variable::accept (VisitorExprBase& visitor) {
    return visitor.visitVariableExprBase(*this);

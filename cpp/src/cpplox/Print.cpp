@@ -10,7 +10,7 @@ Print::Print (Expr *expression) {
     this ->  expression =  expression;
 };
 
-Print::~Print () {
+/*Print::~Print () {
    delete expression;
 }
 
@@ -31,7 +31,7 @@ Print::Print (const Print& other) {
 
 Print* Print::deepcopy () {
    return new Print(*this);
-}
+}*/
 
 Expr* Print::getexpression() {
    return this -> expression;

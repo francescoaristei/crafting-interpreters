@@ -11,7 +11,7 @@ While::While (Expr *expression, Stmt *stmt) {
     this -> stmt = stmt;
 };
 
-While::~While () {
+/*While::~While () {
    delete expression;
    delete stmt;
 }
@@ -37,7 +37,7 @@ While::While (const While& other) {
 
 While* While::deepcopy () {
    return new While(*this);
-}
+}*/
 
 
 Expr* While::getexpression() {

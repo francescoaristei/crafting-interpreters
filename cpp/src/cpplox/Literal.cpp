@@ -11,7 +11,7 @@ Literal::Literal (Object *value) {
     this ->  value =  value;
 };
 
-Literal::~Literal () {
+/*Literal::~Literal () {
    delete value;
 }
 
@@ -32,7 +32,7 @@ Literal::Literal (const Literal& other) {
 
 Literal* Literal::deepcopy () {
    return new Literal(*this);
-}
+}*/
 
 Object* Literal::getvalue() {
    return this -> value;

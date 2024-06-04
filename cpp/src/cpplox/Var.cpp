@@ -11,7 +11,7 @@ Var::Var (Token name, Expr *initializer) {
     this -> name = name;
 };
 
-Var::~Var () {
+/*Var::~Var () {
     delete initializer;
 }
 
@@ -34,7 +34,7 @@ Var::Var (const Var& other) {
 
 Var* Var::deepcopy () {
     return new Var(*this);
-}
+}*/
 
 Expr* Var::getinitializer() {
    return this -> initializer;

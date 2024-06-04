@@ -11,7 +11,7 @@ Get::Get (Expr *object, Token name) {
     this -> name = name;
 };
 
-Get::~Get () {
+/*Get::~Get () {
    delete object;
 }
 
@@ -36,7 +36,7 @@ Get::Get (const Get& other) {
 
 Get* Get::deepcopy () {
    return new Get(*this);
-}
+}*/
 
 Expr* Get::getobject() {
    return this -> object;

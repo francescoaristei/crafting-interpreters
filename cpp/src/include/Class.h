@@ -13,10 +13,10 @@ using namespace std;
 class Class: public Stmt {
    public: 
        Class (Token name, Variable *superclass, vector<Stmt*> methods);
-       ~Class ();
+       /*~Class ();
        Class& operator= (const Class& other);
        Class (const Class& other);
-       Class* deepcopy ();
+       Class* deepcopy ();*/
        any accept (VisitorStmtBase& visitor);
        Token getname();
        vector<Stmt*> getmethods();

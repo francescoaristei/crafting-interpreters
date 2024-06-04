@@ -11,10 +11,10 @@ class VisitorStmtBase;
 class Expression: public Stmt {
    public: 
        Expression (Expr *expression);
-        ~Expression ();
+        /*~Expression ();
         Expression& operator= (const Expression& other);
         Expression (const Expression& other);
-        Expression* deepcopy ();
+        Expression* deepcopy ();*/
        any accept (VisitorStmtBase& visitor);
        Expr* getexpression();
    private: 

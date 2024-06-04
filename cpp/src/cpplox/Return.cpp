@@ -12,7 +12,7 @@ Return::Return (Token keyword, Expr *value) {
     this -> keyword = keyword;
 };
 
-Return::~Return () {
+/*Return::~Return () {
    delete value;
 }
 
@@ -35,7 +35,7 @@ Return::Return (const Return& other) {
 
 Return* Return::deepcopy () {
    return new Return(*this);
-}
+}*/
 
 Expr* Return::getvalue() {
    return this -> value;

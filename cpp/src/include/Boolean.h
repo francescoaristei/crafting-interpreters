@@ -11,8 +11,8 @@ class Boolean: public Object {
         Boolean(bool value);
         string toString();
         bool getValue();
-        Boolean (const Boolean& other);
-        Boolean* deepcopy();
+        //Boolean (const Boolean& other);
+        //Boolean* deepcopy();
 
     private:
         bool value;

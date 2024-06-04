@@ -273,7 +273,7 @@ void Resolver::visitSuperExpr (Super& expr) {
         // LOX ERROR
         // Lox.error(expr.getkeyword(), "Can't use 'super' outside of a class.");
     } else if (currentClass != ClassType::SUBCLASS) {
-        // Lox.error(expr.getkeyword(), "Can't use 'super' ina  class with no superclass.");
+        // Lox.error(expr.getkeyword(), "Can't use 'super' in a  class with no superclass.");
     }
     resolveLocal (&expr, expr.getkeyword());
 }

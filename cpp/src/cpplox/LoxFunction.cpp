@@ -12,7 +12,7 @@ LoxFunction::LoxFunction (Function *declaration, Environment *closure, bool isIn
     this -> isInitializer = isInitializer;
 }
 
-LoxFunction::~LoxFunction () {
+/*LoxFunction::~LoxFunction () {
    delete declaration;
    delete closure;
 }
@@ -39,7 +39,7 @@ LoxFunction::LoxFunction (const LoxFunction& other) {
 
 LoxFunction* LoxFunction::deepcopy () {
     return new LoxFunction(*this);
-}
+}*/
 
 Object* LoxFunction::call (Interpreter interpreter, vector<Object*> arguments) {
     Environment *environment = new Environment(closure);

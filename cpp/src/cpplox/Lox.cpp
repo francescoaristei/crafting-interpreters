@@ -96,6 +96,16 @@ void Lox::run (string source) {
 
     interpreter.interpret(statements);
 
+    /* deallocate token's literal */
+    for (vector<Token>::iterator itr = tokens.begin(); itr != tokens.end(); ++itr) {
+        delete itr->getLiteral();
+    }
+
+    /* free memory from statements */
+    for (vector<Stmt*>::iterator itr = statements.begin(); itr != statements.end(); ++itr) {
+            delete *itr;
+    }
+
     //AstPrinter<string> ast;
     //cout << ast.print(expression);
 }

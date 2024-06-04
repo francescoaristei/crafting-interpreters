@@ -12,7 +12,7 @@ If::If (Expr *expression, Stmt *thenBranch, Stmt *elseBranch) {
     this -> elseBranch = elseBranch;
 };
 
-If::~If () {
+/*If::~If () {
    delete expression;
    delete thenBranch;
    delete elseBranch;
@@ -44,7 +44,7 @@ If::If (const If& other) {
 
 If* If::deepcopy () {
     return new If(*this);
-}
+}*/
 
 Expr* If::getexpression() {
    return this -> expression;

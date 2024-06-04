@@ -18,10 +18,10 @@ using namespace std;
 class LoxClass: public LoxCallable {
     public:
         LoxClass (string name, LoxClass *superclass, map<string, LoxFunction*> methods);
-        ~LoxClass ();
+        /*~LoxClass ();
         LoxClass& operator= (const LoxClass& other);
         LoxClass (const LoxClass& other);
-        LoxClass* deepcopy ();
+        LoxClass* deepcopy ();*/
         string toString ();
         Object* call (Interpreter interpreter, vector<Object*> arguments);
         int arity ();

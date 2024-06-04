@@ -13,10 +13,10 @@ using namespace std;
 class LoxInstance: public Object {
     public:
         LoxInstance (LoxClass *klass);
-        ~LoxInstance ();
+        /*~LoxInstance ();
         LoxInstance& operator= (const LoxInstance& other);
         LoxInstance (const LoxInstance& other);
-        LoxInstance* deepcopy ();
+        LoxInstance* deepcopy ();*/
         string toString ();
         Object* get (Token name);
         void set (Token name, Object *value);

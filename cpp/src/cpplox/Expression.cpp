@@ -11,7 +11,7 @@ Expression::Expression (Expr *expression) {
     this ->  expression =  expression;
 };
 
-Expression::~Expression () {
+/*Expression::~Expression () {
    delete expression;
 }
 
@@ -33,7 +33,7 @@ Expression::Expression (const Expression& other) {
 
 Expression* Expression::deepcopy () {
    return new Expression(*this);
-}
+}*/
 
 Expr* Expression::getexpression() {
    return this -> expression;

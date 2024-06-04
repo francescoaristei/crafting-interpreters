@@ -9,7 +9,7 @@ Block::Block (vector<Stmt*> statements) {
     this -> statements = statements;
 }
 
-Block::~Block () {
+/*Block::~Block () {
     for (vector<Stmt*>::iterator itr = statements.begin(); itr != statements.end(); ++itr) {
         delete *itr;
     }
@@ -41,7 +41,7 @@ Block::Block (const Block& other) {
 
 Block* Block::deepcopy () {
     return new Block(*this);
-}
+}*/
 
 vector<Stmt*> Block::getstatements () {
     return this -> statements;

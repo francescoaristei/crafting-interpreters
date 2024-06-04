@@ -12,10 +12,10 @@ class VisitorExprBase;
 class Logical: public Expr {
    public: 
        Logical (Expr *left, Token op, Expr *right);
-       ~Logical ();
+       /*~Logical ();
        Logical& operator= (const Logical& other);
        Logical (const Logical& other);
-       Logical* deepcopy ();
+       Logical* deepcopy ();*/
        any accept (VisitorExprBase& visitor);
        Expr* getleft();
        Token  getop();

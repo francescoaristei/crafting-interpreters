@@ -13,7 +13,7 @@ LoxInstance::LoxInstance (LoxClass *klass) {
     this -> klass = klass;
 }
 
-LoxInstance::~LoxInstance () {
+/*LoxInstance::~LoxInstance () {
    delete klass;
 }
 
@@ -34,7 +34,7 @@ LoxInstance::LoxInstance (const LoxInstance& other) {
 
 LoxInstance* LoxInstance::deepcopy () {
     return new LoxInstance(*this);
-}
+}*/
 
 string LoxInstance::toString () {
     return klass->getname() + " instance";

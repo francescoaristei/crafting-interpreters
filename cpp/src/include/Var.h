@@ -11,10 +11,10 @@ using namespace std;
 class Var: public Stmt {
    public: 
        Var (Token name, Expr *initializer);
-       ~Var ();
+       /*~Var ();
        Var& operator= (const Var& other);
        Var (const Var& other);
-       Var* deepcopy ();
+       Var* deepcopy ();*/
        any accept (VisitorStmtBase& visitor);
        Expr* getinitializer();
        Token getToken();

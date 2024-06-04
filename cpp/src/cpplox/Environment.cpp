@@ -12,7 +12,7 @@ Environment::Environment () {
     enclosing = NULL;
 }
 
-Environment::~Environment () {
+/*Environment::~Environment () {
     delete this -> enclosing;
 }
 
@@ -34,7 +34,7 @@ Environment::Environment (const Environment& other) {
 
 Environment* Environment::deepcopy () {
     return new Environment(*this);
-}
+}*/
 
 Environment::Environment (Environment *enclosing) {
     this -> enclosing = enclosing;

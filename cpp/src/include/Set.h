@@ -10,10 +10,10 @@ class VisitorExprBase;
 class Set: public Expr {
    public: 
        Set (Expr *object, Token name, Expr *value);
-       ~Set ();
+       /*~Set ();
        Set& operator= (const Set& other);
        Set (const Set& other);
-       Set* deepcopy ();
+       Set* deepcopy ();*/
        any accept (VisitorExprBase& visitor);
        Expr* getobject();
        Expr* getvalue ();

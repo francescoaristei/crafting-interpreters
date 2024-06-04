@@ -11,8 +11,8 @@ class String: public Object {
         String (string value);
         string toString();
         string getValue();
-        String (const String& other);
-        String* deepcopy();
+        //String (const String& other);
+        //String* deepcopy();
     private:
         string value;
 };

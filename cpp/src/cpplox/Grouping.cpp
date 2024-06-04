@@ -9,7 +9,7 @@ Grouping::Grouping (Expr *expression) {
     this ->  expression =  expression;
 };
 
-Grouping::~Grouping () {
+/*Grouping::~Grouping () {
    delete expression;
 }
 
@@ -30,7 +30,7 @@ Grouping::Grouping (const Grouping& other) {
 
 Grouping* Grouping::deepcopy () {
    return new Grouping(*this);
-}
+}*/
 
 Expr* Grouping::getexpression() {
    return this -> expression;

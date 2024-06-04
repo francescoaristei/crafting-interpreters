@@ -10,10 +10,10 @@ using namespace std;
 class If: public Stmt {
    public: 
        If (Expr *condition, Stmt *thenBranch, Stmt *elseBranch);
-       ~If ();
+       /*~If ();
        If& operator= (const If& other);
        If (const If& other);
-       If* deepcopy ();
+       If* deepcopy ();*/
        any accept (VisitorStmtBase& visitor);
        Expr* getexpression();
        Stmt* getThenBranch();

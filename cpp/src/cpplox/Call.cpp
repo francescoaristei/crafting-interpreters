@@ -13,7 +13,7 @@ Call::Call (Expr *callee, Token paren, vector<Expr*> arguments) {
     this ->  arguments =  arguments;
 };
 
-Call::~Call () {
+/*Call::~Call () {
    delete callee;
    for (vector<Expr*>::iterator itr = arguments.begin(); itr != arguments.end(); ++itr) {
         delete *itr;
@@ -55,7 +55,7 @@ Call::Call (const Call& other) {
 
 Call* Call::deepcopy () {
    return new Call(*this);
-}
+}*/
 
 Expr* Call::getcallee() {
    return this -> callee;

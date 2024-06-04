@@ -14,7 +14,7 @@ Function::Function (Token name, vector<Token> params, vector<Stmt*> body) {
     this -> body = body;
 };
 
-Function::~Function () {
+/*Function::~Function () {
    for (vector<Stmt*>::iterator itr = body.begin(); itr != body.end(); ++itr) {
         delete *itr;
     }
@@ -53,7 +53,7 @@ Function::Function (const Function& other) {
 
 Function* Function::deepcopy () {
     return new Function(*this);
-}
+}*/
 
 Token Function::getname() {
    return this -> name;

@@ -10,10 +10,10 @@ using namespace std;
 class Print: public Stmt {
    public: 
        Print (Expr *expression);
-       ~Print ();
+       /*~Print ();
        Print& operator= (const Print& other);
        Print (const Print& other);
-       Print* deepcopy ();
+       Print* deepcopy ();*/
        any accept (VisitorStmtBase& visitor);
        Expr* getexpression();
    private: 

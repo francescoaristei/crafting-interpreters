@@ -454,6 +454,7 @@ vector<Stmt*> Parser::parse () {
         while (!isAtEnd()) {
             statements.push_back(declaration());
         }
+
         return statements;
     } catch (ParseError error) {
         /* empty vector */

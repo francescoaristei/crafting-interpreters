@@ -10,7 +10,7 @@ Assign::Assign (Token name, Expr *value) {
     this ->  value =  value;
 };
 
-Assign::~Assign () {
+/*Assign::~Assign () {
    delete value;
 }
 
@@ -35,7 +35,7 @@ Assign::Assign (const Assign& other) {
 
 Assign* Assign::deepcopy () {
    return new Assign(*this);
-}
+}*/
 
 Token Assign::getname() {
    return this -> name;

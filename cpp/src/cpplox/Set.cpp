@@ -12,7 +12,7 @@ Set::Set (Expr *object, Token name, Expr *value) {
     this -> name = name;
 };
 
-Set::~Set () {
+/*Set::~Set () {
    delete object;
    delete value;
 }
@@ -40,7 +40,7 @@ Set::Set (const Set& other) {
 
 Set* Set::deepcopy () {
     return new Set(*this);
-}
+}*/
 
 Expr* Set::getobject() {
    return this -> object;

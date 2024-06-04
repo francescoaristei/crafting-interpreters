@@ -13,8 +13,8 @@ class Variable: public Expr {
        Variable (Token name);
        any accept (VisitorExprBase& visitor);
        Token  getname();
-       Variable (const Variable& other);
-       Variable* deepcopy();
+       //Variable (const Variable& other);
+       //Variable* deepcopy();
    private: 
        Token name;
 };

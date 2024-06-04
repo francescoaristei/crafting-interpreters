@@ -15,7 +15,7 @@ Class::Class (Token name, Variable *superclass, vector<Stmt*> methods) {
     this -> superclass = superclass;
 };
 
-Class::~Class () {
+/*Class::~Class () {
    delete superclass;
    for (vector<Stmt*>::iterator itr = methods.begin(); itr != methods.end(); ++itr) {
         delete *itr;
@@ -56,7 +56,7 @@ Class::Class (const Class& other) {
 Class* Class::deepcopy () {
    return new Class(*this);
 
-}
+}*/
 
 vector<Stmt*> Class::getmethods() {
    return this -> methods;

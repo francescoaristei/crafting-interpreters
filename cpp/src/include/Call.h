@@ -13,10 +13,10 @@ class VisitorExprBase;
 class Call: public Expr {
    public: 
        Call (Expr *callee, Token paren, vector<Expr*> arguments);
-       ~Call ();
+       /*~Call ();
        Call (const Call& other);
        Call& operator= (const Call& other);
-       Call* deepcopy ();
+       Call* deepcopy ();*/
        any accept (VisitorExprBase& visitor);
        Expr* getcallee();
        Token  getparen();

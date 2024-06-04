@@ -13,9 +13,9 @@ class Token {
         Token (TokenType type, string lexeme, Object *literal, int line);
         /* default empty constructor if is not defined */
         Token () = default;
-        ~Token();
+        /*~Token();
         Token& operator= (const Token& other);
-        Token (const Token& other);
+        Token (const Token& other);*/
         string toString ();
         string getLexeme();
         TokenType getType();

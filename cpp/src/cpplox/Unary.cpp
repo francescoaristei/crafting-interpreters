@@ -12,7 +12,7 @@ Unary::Unary (Token op, Expr *right) {
     this ->  right =  right;
 };
 
-Unary::~Unary () {
+/*Unary::~Unary () {
    delete right;
 }
 
@@ -35,7 +35,7 @@ Unary::Unary (const Unary& other) {
 
 Unary* Unary::deepcopy () {
    return new Unary(*this);
-}
+}*/
 
 Token Unary::getop() {
    return this -> op;

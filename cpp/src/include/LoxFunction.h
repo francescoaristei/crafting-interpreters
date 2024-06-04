@@ -12,10 +12,10 @@
 class LoxFunction: public LoxCallable {
     public:
         LoxFunction(Function *declaration, Environment *environment, bool isInitializer);
-        ~LoxFunction ();
+        /*~LoxFunction ();
         LoxFunction& operator= (const LoxFunction& other);
         LoxFunction (const LoxFunction& other);
-        LoxFunction* deepcopy ();
+        LoxFunction* deepcopy ();*/
         Object* call(Interpreter interpreter, vector<Object*>arguments);
         int arity();
         Function* getdeclaration();
