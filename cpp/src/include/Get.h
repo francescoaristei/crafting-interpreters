@@ -9,17 +9,17 @@ class VisitorExprBase;
 
 class Get: public Expr {
    public: 
-       Get (Expr *object, Token name);
+       Get (Expr *object, Token *name);
        /*~Get ();
        Get& operator= (const Get& other);
        Get (const Get& other);
        Get* deepcopy ();*/
        any accept (VisitorExprBase& visitor);
        Expr* getobject();
-       Token getname ();
+       Token* getname ();
    private: 
        Expr *object;
-       Token name;
+       Token *name;
 };
 
 # endif

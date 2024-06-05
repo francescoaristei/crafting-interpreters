@@ -9,13 +9,13 @@ class VisitorExprBase;
 
 class Super: public Expr {
    public: 
-       Super (Token keyword, Token method);
+       Super (Token *keyword, Token *method);
        any accept (VisitorExprBase& visitor);
-       Token getkeyword ();
-       Token getmethod ();
+       Token* getkeyword ();
+       Token* getmethod ();
    private: 
-       Token keyword;
-       Token method;
+       Token *keyword;
+       Token *method;
 };
 
 # endif

@@ -6,7 +6,7 @@
 # include <any>
 using namespace std;
 
-Var::Var (Token name, Expr *initializer) {
+Var::Var (Token *name, Expr *initializer) {
     this -> initializer =  initializer;
     this -> name = name;
 };
@@ -40,7 +40,7 @@ Expr* Var::getinitializer() {
    return this -> initializer;
 }
 
-Token Var::getToken () {
+Token* Var::getToken () {
     return this -> name;
 }
 

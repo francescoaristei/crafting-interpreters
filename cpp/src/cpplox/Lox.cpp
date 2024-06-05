@@ -76,7 +76,7 @@ void Lox::run (string source) {
         Runs the commands.
     */
     Scanner scanner(source);
-    vector<Token> tokens = scanner.scanTokens();
+    vector<Token*> tokens = scanner.scanTokens();
 
     /*for (int i = 0; i < tokens.size(); i++) {
         cout << tokens[i].toString() << "\n";
@@ -86,6 +86,13 @@ void Lox::run (string source) {
     vector<Stmt*> statements = parser.parse();
     if (hadError)
         return;
+
+    //cout << dynamic_cast<Function*>(dynamic_cast<Class*>(statements[0])->getmethods()[0])->getname()->getLexeme() << "\n";
+
+    /*Var *var1 = dynamic_cast<Var*>(statements[0]);
+    Literal *l1 = dynamic_cast<Literal*>(var1->getinitializer());
+    String *s1 = dynamic_cast<String*>(l1->getvalue());
+    cout << s1->getValue() << "\n";*/
 
     Interpreter interpreter;
     
@@ -97,14 +104,14 @@ void Lox::run (string source) {
     interpreter.interpret(statements);
 
     /* deallocate token's literal */
-    for (vector<Token>::iterator itr = tokens.begin(); itr != tokens.end(); ++itr) {
+    /*for (vector<Token>::iterator itr = tokens.begin(); itr != tokens.end(); ++itr) {
         delete itr->getLiteral();
-    }
+    }*/
 
     /* free memory from statements */
-    for (vector<Stmt*>::iterator itr = statements.begin(); itr != statements.end(); ++itr) {
+    /*for (vector<Stmt*>::iterator itr = statements.begin(); itr != statements.end(); ++itr) {
             delete *itr;
-    }
+    }*/
 
     //AstPrinter<string> ast;
     //cout << ast.print(expression);
@@ -117,7 +124,7 @@ void Lox::error (int line, string msg) {
 }
 
 void Lox::runtimeError (Interpreter::RuntimeError error) {
-    cout << error.getMessage() << "\n[line " << error.getToken().getLine() + "]";
+    cout << error.getMessage() << "\n[line " << error.getToken()->getLine() + "]";
     hadRuntimeError = true;
 }
 
@@ -127,11 +134,11 @@ void Lox::report (int line, string where, string msg) {
     Lox::hadError = true;
 }
 
-void Lox::error (Token token, string msg) {
-    if (token.getType() == TokenType::EOFF) {
-        report(token.getType(), " at end", msg);
+void Lox::error (Token *token, string msg) {
+    if (token->getType() == TokenType::EOFF) {
+        report(token->getType(), " at end", msg);
     }
     else {
-        report(token.getLine(), " at '" + token.getLexeme() + "'", msg);
+        report(token->getLine(), " at '" + token->getLexeme() + "'", msg);
     }
 }

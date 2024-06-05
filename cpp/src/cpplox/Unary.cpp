@@ -7,7 +7,7 @@
 using namespace std;
 
 
-Unary::Unary (Token op, Expr *right) {
+Unary::Unary (Token *op, Expr *right) {
     this ->  op =  op;
     this ->  right =  right;
 };
@@ -37,7 +37,7 @@ Unary* Unary::deepcopy () {
    return new Unary(*this);
 }*/
 
-Token Unary::getop() {
+Token* Unary::getop() {
    return this -> op;
 }
 

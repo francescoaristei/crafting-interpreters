@@ -5,7 +5,7 @@
 # include <any>
 using namespace std;
 
-Assign::Assign (Token name, Expr *value) {
+Assign::Assign (Token *name, Expr *value) {
     this ->  name =  name;
     this ->  value =  value;
 };
@@ -37,7 +37,7 @@ Assign* Assign::deepcopy () {
    return new Assign(*this);
 }*/
 
-Token Assign::getname() {
+Token* Assign::getname() {
    return this -> name;
 }
 

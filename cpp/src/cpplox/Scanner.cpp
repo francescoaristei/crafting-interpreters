@@ -140,7 +140,7 @@ void Scanner::identifier () {
 
 void Scanner::addToken (TokenType type, Object *literal) {
     string text = this -> source.substr(this -> start, this -> current - this -> start);
-    Token tok(type, text, literal, line);
+    Token *tok = new Token(type, text, literal, line);
     this -> tokens.push_back(tok);
 }
 
@@ -206,14 +206,14 @@ void Scanner::scanToken () {
     }
 }
 
-vector<Token> Scanner::scanTokens () {
+vector<Token*> Scanner::scanTokens () {
     while (!isAtEnd()) {
         /* beginning of the lexeme */
         this -> start = this -> current;
         scanToken();
     }
 
-    Token tok(EOFF, "", NULL, line);
+    Token *tok = new Token(EOFF, "", NULL, line);
     this -> tokens.push_back(tok);
     return tokens;
 }

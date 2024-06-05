@@ -44,8 +44,8 @@ void Environment::define (string name, Object *value) {
     values[name] = value;
 }
 
-Object* Environment::get (Token name) {
-    map<string, Object*>::iterator it = values.find(name.getLexeme());
+Object* Environment::get (Token *name) {
+    map<string, Object*>::iterator it = values.find(name->getLexeme());
     if (it != values.end()) {
         return it -> second;
     }
@@ -54,11 +54,11 @@ Object* Environment::get (Token name) {
 
     /* make it runtime error instead of syntax (compile time) error to allow referencing before declaring a variable (as in recursion) */
     throw new Interpreter::RuntimeError (name,
-        "Undefined variable '" + name.getLexeme() + "'.");
+        "Undefined variable '" + name->getLexeme() + "'.");
 }
 
-void Environment::assignAt (int distance, Token name, Object *value) {
-    ancestor(distance)->getValues()[name.getLexeme()] = value;
+void Environment::assignAt (int distance, Token *name, Object *value) {
+    ancestor(distance)->getValues()[name->getLexeme()] = value;
 }
 
 Environment* Environment::getEnclosing () {
@@ -84,10 +84,10 @@ Object* Environment::getAt (int distance, string name) {
 }
 
 /* assigment needs to be distinguished from the definition (done by define)*/
-void Environment::assign (Token name, Object *value) {
-    map<string, Object*>::iterator it = values.find(name.getLexeme());
+void Environment::assign (Token *name, Object *value) {
+    map<string, Object*>::iterator it = values.find(name->getLexeme());
     if (it != values.end()) {
-        values[name.getLexeme()] = value;
+        values[name->getLexeme()] = value;
         return;
     }
 
@@ -97,5 +97,5 @@ void Environment::assign (Token name, Object *value) {
     }
 
     throw new Interpreter::RuntimeError(name,
-        "Undefined variable '" + name.getLexeme() + "'.");
+        "Undefined variable '" + name->getLexeme() + "'.");
 }

@@ -68,9 +68,9 @@ class Resolver: public VisitorExpr<void>, VisitorStmt<void> {
         void resolve (Expr *expr);
         void beginScope ();
         void endScope ();
-        void declare (Token name);
-        void define (Token name);
-        void resolveLocal (Expr *expr, Token name);
+        void declare (Token *name);
+        void define (Token *name);
+        void resolveLocal (Expr *expr, Token *name);
         void resolveFunction (Function *function, FunctionType type);
         FunctionType currentFunction = FunctionType::NONE_F;
         ClassType currentClass = ClassType::NONE_C;

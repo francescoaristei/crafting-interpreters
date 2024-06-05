@@ -9,7 +9,7 @@
 # include <any>
 using namespace std;
 
-Class::Class (Token name, Variable *superclass, vector<Stmt*> methods) {
+Class::Class (Token *name, Variable *superclass, vector<Stmt*> methods) {
     this ->  name = name;
     this -> methods = methods;
     this -> superclass = superclass;
@@ -58,11 +58,11 @@ Class* Class::deepcopy () {
 
 }*/
 
-vector<Stmt*> Class::getmethods() {
+const vector<Stmt*>& Class::getmethods() const {
    return this -> methods;
 }
 
-Token Class::getname () {
+Token* Class::getname () {
     return this -> name;
 }
 

@@ -6,7 +6,7 @@
 # include <any>
 using namespace std;
 
-Set::Set (Expr *object, Token name, Expr *value) {
+Set::Set (Expr *object, Token *name, Expr *value) {
     this ->  object =  object;
     this -> value = value;
     this -> name = name;
@@ -46,7 +46,7 @@ Expr* Set::getobject() {
    return this -> object;
 }
 
-Token Set::getname () {
+Token* Set::getname () {
     return this -> name;
 }
 

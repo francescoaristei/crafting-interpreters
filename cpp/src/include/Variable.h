@@ -10,13 +10,13 @@ using namespace std;
 
 class Variable: public Expr {
    public: 
-       Variable (Token name);
+       Variable (Token *name);
        any accept (VisitorExprBase& visitor);
-       Token  getname();
+       Token* getname();
        //Variable (const Variable& other);
        //Variable* deepcopy();
    private: 
-       Token name;
+       Token *name;
 };
 
 # endif

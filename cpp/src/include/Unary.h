@@ -10,16 +10,16 @@ using namespace std;
 
 class Unary: public Expr {
    public: 
-       Unary (Token op, Expr *right);
+       Unary (Token *op, Expr *right);
        /*~Unary ();
        Unary& operator= (const Unary& other);
        Unary (const Unary& other);
        Unary* deepcopy ();*/
        any accept (VisitorExprBase& visitor);
-       Token  getop();
+       Token*  getop();
        Expr* getright();
    private: 
-       Token op;
+       Token *op;
        Expr *right;
 };
 

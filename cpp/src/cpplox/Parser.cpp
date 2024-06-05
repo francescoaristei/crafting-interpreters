@@ -28,24 +28,24 @@
 using namespace std;
 
 
-Token Parser::peek () {
+Token* Parser::peek () {
     return tokens[current];
 }
 
-Token Parser::previous () {
+Token* Parser::previous () {
     return tokens[current - 1];
 }
 
 bool Parser::isAtEnd () {
-    return peek().getType() == EOFF;
+    return peek()->getType() == EOFF;
 }
 
 bool Parser::check (TokenType type) {
     if (isAtEnd()) return false;
-    return peek().getType() == type;
+    return peek()->getType() == type;
 }
 
-Token Parser::advance () {
+Token* Parser::advance () {
     if (!isAtEnd()) current++;
     return previous();
 }
@@ -62,7 +62,7 @@ bool Parser::match (vector<TokenType> types) {
 }
 
 /* ADJUST to return POINTER? */
-typename Parser::ParseError Parser::error (Token token, const string& message) {
+typename Parser::ParseError Parser::error (Token *token, const string& message) {
     Lox::error(token, message);
     return Parser::ParseError(message);
 }
@@ -71,9 +71,9 @@ void Parser::synchronize () {
     advance();
 
     while (!isAtEnd()) {
-        if (previous().getType() == SEMICOLON) return;
+        if (previous()->getType() == SEMICOLON) return;
 
-        switch (peek().getType()) {
+        switch (peek()->getType()) {
             case CLASS:
             case FUN:
             case VAR:
@@ -88,7 +88,7 @@ void Parser::synchronize () {
     }
 }
 
-Token Parser::consume (TokenType type, const string& message) {
+Token* Parser::consume (TokenType type, const string& message) {
     if (check(type)) return advance();
 
     throw error(peek(), message);
@@ -102,13 +102,13 @@ Expr* Parser::primary() {
     if (match(vector<TokenType>{NIL})) return new Literal(NULL);
 
     if (match(vector<TokenType>{NUMBER, STRING})) {
-        return new Literal(previous().getLiteral());
+        return new Literal(previous()->getLiteral());
     }
 
     if (match(vector<TokenType>{SUPER})) {
-        Token keyword = previous();
+        Token *keyword = previous();
         consume(DOT, "Expect '.' after 'super'.");
-        Token method = consume(IDENTIFIER,
+        Token *method = consume(IDENTIFIER,
                 "Expect superclass method name.");
         return new Super(keyword, method);
     }
@@ -137,7 +137,7 @@ Expr* Parser::call () {
         if (match(vector<TokenType>{LEFT_PAREN})) {
             expr = finishCall(expr);
         } else if (match(vector<TokenType>{DOT})) {
-            Token name = consume (IDENTIFIER,
+            Token *name = consume (IDENTIFIER,
                 "Expect property name after '.'.");
             expr = new Get(expr, name);
         } else {
@@ -158,7 +158,7 @@ Expr* Parser::finishCall (Expr *callee) {
             arguments.push_back(expression());
         } while (match(vector<TokenType>{COMMA}));
     }
-    Token paren = consume(RIGHT_PAREN, "Expect ')' after arguments.");
+    Token *paren = consume(RIGHT_PAREN, "Expect ')' after arguments.");
 
     return new Call(callee, paren, arguments);
 }
@@ -166,19 +166,21 @@ Expr* Parser::finishCall (Expr *callee) {
 /* unary --> ("!" | "-") unary | primary */
 Expr* Parser::unary () {
     if (match(vector<TokenType>{BANG, MINUS})) {
-        Token op = previous();
+        Token *op = previous();
         Expr *right = unary();
         return new Unary(op, right);
     }
 
-    return call();
+    Expr *expr = call();
+
+    return expr;
 }
 
 Expr* Parser::factor () {
     Expr *expr = unary();
 
     while (match(vector<TokenType>{SLASH, STAR})) {
-        Token op = previous();
+        Token *op = previous();
         Expr *right = unary();
         expr = new Binary(expr, op, right);
     }
@@ -189,7 +191,7 @@ Expr* Parser::factor () {
 Expr* Parser::term () {
     Expr *expr = factor();
     while (match(vector<TokenType>{MINUS, PLUS})) {
-        Token op = previous();
+        Token *op = previous();
         Expr *right = factor();
         expr = new Binary(expr, op, right);
     }
@@ -202,7 +204,7 @@ Expr* Parser::term () {
 Expr* Parser::comparison () {
     Expr *expr = term();
     while (match(vector<TokenType>{GREATER, GREATER_EQUAL, LESS, LESS_EQUAL})) {
-        Token op = previous();
+        Token *op = previous();
         Expr *right = term();
         expr = new Binary(expr, op, right);
     }
@@ -213,7 +215,7 @@ Expr* Parser::comparison () {
 Expr* Parser::equality () {
     Expr *expr = comparison();
     while (match(vector<TokenType>{BANG_EQUAL, EQUAL_EQUAL})) {
-        Token op = previous();
+        Token *op = previous();
         Expr *right = comparison();
         /* recursively nests binary expressions made by: comparison (!= OR ==) comparison */
         expr = new Binary(expr, op, right);
@@ -227,7 +229,7 @@ Expr* Parser::andexpr () {
     Expr *expr = equality();
 
     while (match(vector<TokenType>{AND})) {
-        Token op = previous();
+        Token *op = previous();
         Expr *right = equality();
         expr = new Logical(expr, op, right);
     }
@@ -238,21 +240,23 @@ Expr* Parser::andexpr () {
 Expr* Parser::orexpr () {
     Expr *expr = andexpr();
     while (match(vector<TokenType>{OR})) {
-        Token op = previous();
+        Token *op = previous();
         Expr *right = andexpr();
         expr = new Logical(expr, op, right);
     }
+
+    return expr;
 }
 
 Expr* Parser::assignment () {
     Expr* expr = orexpr();
 
     if (match({EQUAL})) {
-        Token equals = previous();
+        Token *equals = previous();
         Expr *value = assignment();
 
         if (Variable* v1 = dynamic_cast<Variable*>(expr)) {
-            Token name = dynamic_cast<Variable*>(expr)->getname();
+            Token *name = dynamic_cast<Variable*>(expr)->getname();
             return new Assign(name, value);
         } else if (Get* g1 = dynamic_cast<Get*>(expr)) {
             Get *get = dynamic_cast<Get*>(expr);
@@ -261,6 +265,7 @@ Expr* Parser::assignment () {
 
         error(equals, "Invalid assignment target."); 
     }
+
     return expr;
 }
 
@@ -358,6 +363,7 @@ Stmt* Parser::ifStatement () {
 }
 
 Stmt* Parser::printStatement () {
+    //cout << "ENTERED1" << "\n";
     Expr *value = expression();
     consume(SEMICOLON, "Expect ';' after value.");
     return new Print(value);
@@ -370,7 +376,7 @@ Stmt* Parser::expressionStatement () {
 }
 
 Stmt* Parser::returnStatement () {
-    Token keyword = previous();
+    Token *keyword = previous();
     Expr* value = NULL;
     if (!check(SEMICOLON)) {
         value = expression();
@@ -380,7 +386,7 @@ Stmt* Parser::returnStatement () {
 }
 
 Stmt* Parser::classDeclaration () {
-    Token name = consume(IDENTIFIER, "Expect class name.");
+    Token *name = consume(IDENTIFIER, "Expect class name.");
 
     Variable *superclass = NULL;
     if (match(vector<TokenType>{LESS})) {
@@ -392,7 +398,8 @@ Stmt* Parser::classDeclaration () {
 
     vector<Stmt*> methods;
     while (!check(RIGHT_BRACE) && !isAtEnd()) {
-        methods.push_back(function("method"));
+        Stmt *stmt = function("method");
+        methods.push_back(stmt);
     }
 
     consume(RIGHT_BRACE, "Expect '}' after class body");
@@ -401,7 +408,7 @@ Stmt* Parser::classDeclaration () {
 }
 
 Stmt* Parser::varDeclaration () {
-    Token name = consume(IDENTIFIER, "Expect variable name.");
+    Token *name = consume(IDENTIFIER, "Expect variable name.");
 
     Expr* initializer = NULL;
     if (match(vector<TokenType>{EQUAL})) {
@@ -409,13 +416,14 @@ Stmt* Parser::varDeclaration () {
     }
 
     consume(SEMICOLON, "Expect ';' after variable declaration.");
+
     return new Var(name, initializer);
 }
 
 Stmt* Parser::function (string kind) {
-    Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
+    Token *name = consume(IDENTIFIER, "Expect " + kind + " name.");
     consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
-    vector<Token> parameters;
+    vector<Token*> parameters;
     if (!check(RIGHT_PAREN)) {
         do {
             if (parameters.size() >= 255) {
@@ -433,13 +441,17 @@ Stmt* Parser::function (string kind) {
 }
 
 Stmt* Parser::declaration () {
+
     try {
-        if (match(vector<TokenType>{CLASS}))
+        if (match(vector<TokenType>{CLASS})) {
             return classDeclaration();
-        if (match(vector<TokenType>{FUN}))
+        }
+        if (match(vector<TokenType>{FUN})) {
             return function("function");
-        if (match(vector<TokenType>{VAR})) 
+        }
+        if (match(vector<TokenType>{VAR})) {
             return varDeclaration();
+        }
 
         return statement();
     } catch (ParseError error) {
@@ -453,8 +465,8 @@ vector<Stmt*> Parser::parse () {
         vector<Stmt*> statements;
         while (!isAtEnd()) {
             statements.push_back(declaration());
+            //cout << dynamic_cast<Function*>(dynamic_cast<Class*>(statements[0])->getmethods()[0])->getname()->getLexeme() << "\n";
         }
-
         return statements;
     } catch (ParseError error) {
         /* empty vector */
@@ -462,6 +474,6 @@ vector<Stmt*> Parser::parse () {
     }
 }
 
-Parser::Parser (vector<Token> tokens) {
+Parser::Parser (vector<Token*> tokens) {
     this -> tokens = tokens;
 }

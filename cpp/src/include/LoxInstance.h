@@ -18,8 +18,8 @@ class LoxInstance: public Object {
         LoxInstance (const LoxInstance& other);
         LoxInstance* deepcopy ();*/
         string toString ();
-        Object* get (Token name);
-        void set (Token name, Object *value);
+        Object* get (Token *name);
+        void set (Token *name, Object *value);
     private:
         LoxClass *klass;
         map<string, Object*> fields;

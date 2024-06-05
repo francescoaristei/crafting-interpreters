@@ -7,7 +7,7 @@
 # include <any>
 using namespace std;
 
-Return::Return (Token keyword, Expr *value) {
+Return::Return (Token *keyword, Expr *value) {
     this ->  value =  value;
     this -> keyword = keyword;
 };
@@ -41,7 +41,7 @@ Expr* Return::getvalue() {
    return this -> value;
 }
 
-Token Return::getkeyword () {
+Token* Return::getkeyword () {
     return this -> keyword;
 }
 

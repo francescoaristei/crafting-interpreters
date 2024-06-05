@@ -36,6 +36,7 @@ Resolver::Resolver (Interpreter interpreter) {
 
 
 void Resolver::resolve (Stmt *stmt) {
+    //cout << dynamic_cast<Function*>(dynamic_cast<Class*>(stmt)->getmethods()[0])->getname()->getLexeme() << "\n";
     stmt->accept(*this);
 }
 
@@ -44,12 +45,14 @@ void Resolver::resolve (Expr *expr) {
 }
 
 void Resolver::resolve (vector<Stmt*> statements) {
+    //cout << dynamic_cast<Function*>(dynamic_cast<Class*>(statements[0])->getmethods()[0])->getname()->getLexeme() << "\n";
     for (vector<Stmt*>::iterator itr = statements.begin(); itr != statements.end(); ++itr) {
+        //cout << dynamic_cast<Function*>(dynamic_cast<Class*>(*itr)->getmethods()[0])->getname()->getLexeme() << "\n";
         resolve(*itr);
     }
 }
 
-void Resolver::resolveLocal (Expr *expr, Token name) {
+void Resolver::resolveLocal (Expr *expr, Token *name) {
     list<map<string, bool>> templist;
     int i = scopes.size() - 1;
     bool exit = false;
@@ -79,7 +82,7 @@ void Resolver::resolveFunction (Function *function, FunctionType type) {
     FunctionType enclosingFunction = currentFunction;
     currentFunction = type;
     beginScope();
-    for (vector<Token>::iterator itr = function->getparams().begin(); itr != function->getparams().end(); ++itr) {
+    for (vector<Token*>::const_iterator itr = function->getparams().begin(); itr != function->getparams().end(); ++itr) {
         declare(*itr);
         define(*itr);
     }
@@ -97,20 +100,20 @@ void Resolver::beginScope () {
     scopes.push(scope);
 }
 
-void Resolver::declare (Token name) {
+void Resolver::declare (Token *name) {
     if (scopes.empty()) return;
 
     map<string, bool> scope = scopes.top();
-    if (scope.find(name.getLexeme()) != scope.end()) {
+    if (scope.find(name->getLexeme()) != scope.end()) {
         // STILL ERROR WITH LOX
         //Lox.error(name, "Already variable with this name in this scope");
     }
-    scope[name.getLexeme()] = false;
+    scope[name->getLexeme()] = false;
 }
 
-void Resolver::define (Token name) {
+void Resolver::define (Token *name) {
     if (scopes.empty()) return;
-    scopes.top()[name.getLexeme()] = true;
+    scopes.top()[name->getLexeme()] = true;
 }
 
 void Resolver::visitBlockStmt (Block& stmt) {
@@ -163,13 +166,14 @@ void Resolver::visitReturnStmt (Return& stmt) {
 }
 
 void Resolver::visitClassStmt (Class& stmt) {
+    //cout << dynamic_cast<Function*>(stmt.getmethods()[0])->getname()->getLexeme() << "\n";
     ClassType enclosingClass = currentClass;
     currentClass = ClassType::CLASS;
 
     declare(stmt.getname());
     define(stmt.getname());
 
-    if (stmt.getsuperclass() != NULL && stmt.getname().getLexeme() == stmt.getsuperclass()->getname().getLexeme()) {
+    if (stmt.getsuperclass() != NULL && stmt.getname()->getLexeme() == stmt.getsuperclass()->getname()->getLexeme()) {
         // LOX ERROR TO FIX
         //Lox.error(stmt.getsuperclass()->getname(), "A class can't be inherit from itself.");
     }
@@ -187,12 +191,16 @@ void Resolver::visitClassStmt (Class& stmt) {
     beginScope();
     scopes.top()["this"] = true;
 
-    for (vector<Stmt*>::iterator itr = stmt.getmethods().begin(); itr != stmt.getmethods().end(); ++itr) {
-        FunctionType declaration = FunctionType::METHOD;
-        if (dynamic_cast<Function*>(*itr)->getname().getLexeme() == "init") {
-            declaration = FunctionType::INITIALIZER;
+    //cout << dynamic_cast<Function*>(stmt.getmethods()[1])->getname()->getLexeme() << "\n";
+    for (vector<Stmt*>::const_iterator itr = stmt.getmethods().begin(); itr != stmt.getmethods().end(); ++itr) {
+        Function* func = dynamic_cast<Function*>(*itr);
+        if (func) {
+            FunctionType declaration = FunctionType::METHOD;
+            if (func->getname()->getLexeme() == "init") {
+                declaration = FunctionType::INITIALIZER;
+            }
+            resolveFunction(func, declaration);
         }
-        resolveFunction(dynamic_cast<Function*>(*itr), declaration);
     }
 
     endScope();
@@ -209,7 +217,7 @@ void Resolver::visitWhileStmt (While& stmt) {
 
 void Resolver::visitVariableExpr (Variable& expr) {
     if (!scopes.empty() &&
-        scopes.top()[expr.getname().getLexeme()] == false) {
+        scopes.top()[expr.getname()->getLexeme()] == false) {
             // STILL ERROR WITH LOX
             //Lox.error(expr.getname(), "Can't read local variable in its own initializer");
         }
@@ -228,7 +236,7 @@ void Resolver::visitBinaryExpr (Binary& expr) {
 
 void Resolver::visitCallExpr (Call& expr) {
     resolve(expr.getcallee());
-    for (vector<Expr*>::iterator itr = expr.getarguments().begin(); itr != expr.getarguments().end(); ++itr) {
+    for (vector<Expr*>::const_iterator itr = expr.getarguments().begin(); itr != expr.getarguments().end(); ++itr) {
         resolve(*itr);
     }
 }

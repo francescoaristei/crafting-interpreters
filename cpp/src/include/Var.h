@@ -10,17 +10,17 @@ using namespace std;
 
 class Var: public Stmt {
    public: 
-       Var (Token name, Expr *initializer);
+       Var (Token *name, Expr *initializer);
        /*~Var ();
        Var& operator= (const Var& other);
        Var (const Var& other);
        Var* deepcopy ();*/
        any accept (VisitorStmtBase& visitor);
        Expr* getinitializer();
-       Token getToken();
+       Token* getToken();
    private: 
        Expr *initializer;
-       Token name;
+       Token *name;
 };
 
 # endif

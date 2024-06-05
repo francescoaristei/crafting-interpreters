@@ -17,7 +17,7 @@ class Lox {
         static void runPrompt ();
         static void error (int line, string msg);
         static void report (int line, string where, string msg);
-        static void error (Token token, string msg);
+        static void error (Token *token, string msg);
         static void runtimeError (Interpreter::RuntimeError error);
     
     private:

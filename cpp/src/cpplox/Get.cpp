@@ -6,7 +6,7 @@
 # include <any>
 using namespace std;
 
-Get::Get (Expr *object, Token name) {
+Get::Get (Expr *object, Token *name) {
     this ->  object =  object;
     this -> name = name;
 };
@@ -42,7 +42,7 @@ Expr* Get::getobject() {
    return this -> object;
 }
 
-Token Get::getname () {
+Token* Get::getname () {
     return this -> name;
 }
 

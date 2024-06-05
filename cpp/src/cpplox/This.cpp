@@ -6,12 +6,12 @@
 # include <any>
 using namespace std;
 
-This::This (Token name) {
+This::This (Token *name) {
     this -> name = name;
 };
 
 
-Token This::getname () {
+Token* This::getname () {
     return this -> name;
 }
 

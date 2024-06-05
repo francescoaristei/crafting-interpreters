@@ -7,7 +7,7 @@
 # include <any>
 using namespace std;
 
-Binary::Binary (Expr *left, Token op, Expr *right) {
+Binary::Binary (Expr *left, Token *op, Expr *right) {
     this ->  left =  left;
     this ->  op =  op;
     this ->  right =  right;
@@ -48,7 +48,7 @@ Expr* Binary::getleft() {
    return this -> left;
 }
 
-Token Binary::getop() {
+Token* Binary::getop() {
    return this -> op;
 }
 

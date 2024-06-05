@@ -65,10 +65,10 @@ Object* Interpreter::visitVariableExpr (Variable& expr) {
     return lookUpVariable(expr.getname(), &expr);
 }
 
-Object* Interpreter::lookUpVariable (Token name, Expr *expr) {
+Object* Interpreter::lookUpVariable (Token *name, Expr *expr) {
     if (locals.find(expr) != locals.end()) {
         int distance = locals[expr];
-        return environment->getAt(distance, name.getLexeme());
+        return environment->getAt(distance, name->getLexeme());
     } else {
         return globals->get(name);
     }
@@ -80,7 +80,7 @@ void Interpreter::visitVarStmt (Var& stmt) {
         value = evaluate(stmt.getinitializer());
     }
 
-    environment -> define(stmt.getToken().getLexeme(), value);
+    environment -> define(stmt.getToken()->getLexeme(), value);
 }
 
 void Interpreter::visitExpressionStmt (Expression& stmt) {
@@ -112,7 +112,7 @@ void Interpreter::visitWhileStmt (While& stmt) {
 
 void Interpreter::visitFunctionStmt (Function& stmt) {
     LoxFunction *function = new LoxFunction(&stmt, environment, false);
-    environment->define(stmt.getname().getLexeme(), function);
+    environment->define(stmt.getname()->getLexeme(), function);
 }
 
 void Interpreter::visitReturnStmt (Return& stmt) {
@@ -131,7 +131,7 @@ void Interpreter::visitClassStmt (Class& stmt) {
             throw new RuntimeError (stmt.getsuperclass()->getname(), "Superclass must be a class.");
         }
     }
-    environment->define(stmt.getname().getLexeme(), NULL);
+    environment->define(stmt.getname()->getLexeme(), NULL);
     //LoxClass *klass = new LoxClass(stmt.getname().getLexeme());
     //environment->assign(stmt.getname(), klass);
 
@@ -142,12 +142,14 @@ void Interpreter::visitClassStmt (Class& stmt) {
 
     map<string, LoxFunction*> methods;
 
-    for (vector<Stmt*>::iterator itr = stmt.getmethods().begin(); itr != stmt.getmethods().end(); ++itr) {
-        bool isInit = dynamic_cast<Function*>((*itr))->getname().getLexeme() == "init" ? true : false;
-        LoxFunction *function = new LoxFunction(dynamic_cast<Function*>(*itr), environment, isInit);
+    for (vector<Stmt*>::const_iterator itr = stmt.getmethods().begin(); itr != stmt.getmethods().end(); ++itr) {
+        Function *fun = dynamic_cast<Function*>((*itr));
+        bool isInit = fun ->getname()->getLexeme() == "init" ? true : false;
+        LoxFunction *function = new LoxFunction(fun, environment, isInit);
+        methods[fun->getname()->getLexeme()] = function;
     }
 
-    LoxClass *klass = new LoxClass (stmt.getname().getLexeme(), dynamic_cast<LoxClass*>(superclass), methods);
+    LoxClass *klass = new LoxClass (stmt.getname()->getLexeme(), dynamic_cast<LoxClass*>(superclass), methods);
 
     if (superclass != NULL) {
         environment = environment->getEnclosing();
@@ -168,20 +170,22 @@ Object* Interpreter::visitCallExpr (Call& expr) {
     Object *callee = evaluate(expr.getcallee());
 
     vector<Object*> arguments;
-    for (vector<Expr*>::iterator itr = expr.getarguments().begin(); itr != expr.getarguments().end(); ++itr) {
+    for (vector<Expr*>::const_iterator itr = expr.getarguments().begin(); itr != expr.getarguments().end(); ++itr) {
         arguments.push_back(evaluate(*itr));
     }
 
-    if (LoxCallable* lc = dynamic_cast<LoxCallable*>(callee)) {
+    LoxCallable* lc = dynamic_cast<LoxCallable*>(callee);
+    if (!lc) {
         throw new Interpreter::RuntimeError(expr.getparen(),
             "Can only call functions and classes.");
     }
 
     LoxCallable *function = dynamic_cast<LoxCallable*>(callee);
 
-    if (arguments.size() != function -> arity()) {
+    if (arguments.size() != function-> arity()) {
         throw new Interpreter::RuntimeError (expr.getparen(), "Expected " + to_string(function -> arity()) + " arguments but got " + to_string(arguments.size()) + ".");
     }
+
     return function -> call(*this, arguments);
 }
 
@@ -203,7 +207,7 @@ Object* Interpreter::visitBinaryExpr (Binary& expr) {
     Object *left = evaluate(expr.getleft());
     Object *right = evaluate(expr.getright());
 
-    switch (expr.getop().getType()) {
+    switch (expr.getop()->getType()) {
         case GREATER:
             checkNumberOperands(expr.getop(), left, right);
             return new Boolean(dynamic_cast<Double*>(left) -> getValue() > dynamic_cast<Double*>(right) -> getValue());
@@ -248,7 +252,7 @@ Object* Interpreter::visitBinaryExpr (Binary& expr) {
 Object* Interpreter::visitLogicalExpr (Logical& expr) {
     Object *left = evaluate(expr.getleft());
 
-    if (expr.getop().getType() == TokenType::OR) {
+    if (expr.getop()->getType() == TokenType::OR) {
         if (isTruthy(left)) return left;
     } else { /* if AND expr and left part is false */
         if (!isTruthy(left)) return left;
@@ -269,7 +273,7 @@ Object* Interpreter::visitLiteralExpr (Literal& expr) {
 /* post order traversal of the unary expression syntax tree */
 Object* Interpreter::visitUnaryExpr (Unary& expr) {
     Object *right = evaluate(expr.getright());
-    switch (expr.getop().getType()) {
+    switch (expr.getop()->getType()) {
         case BANG:
             return new Boolean(!isTruthy(right));
         case MINUS:
@@ -282,8 +286,9 @@ Object* Interpreter::visitUnaryExpr (Unary& expr) {
 
 Object* Interpreter::visitGetExpr (Get& expr) {
     Object *object = evaluate(expr.getobject());
-    if (Object* o1 = dynamic_cast<Object*>(object))
+    if (Object* o1 = dynamic_cast<Object*>(object)) {
         return dynamic_cast<LoxInstance*>(object)->get(expr.getname());
+    }
 
     throw new Interpreter::RuntimeError (expr.getname(), "Only instances have properties.");
 }
@@ -310,10 +315,10 @@ Object* Interpreter::visitSuperExpr (Super& expr) {
 
     LoxInstance *object = dynamic_cast<LoxInstance*>(environment->getAt(distance - 1, "this"));
 
-    LoxFunction *method = superclass->findMethod(expr.getmethod().getLexeme());
+    LoxFunction *method = superclass->findMethod(expr.getmethod()->getLexeme());
 
     if (method == NULL) {
-        throw new Interpreter::RuntimeError (expr.getmethod(), "undefined property '" + expr.getmethod().getLexeme() + "'.");
+        throw new Interpreter::RuntimeError (expr.getmethod(), "undefined property '" + expr.getmethod()->getLexeme() + "'.");
     }
     return method->bind(object);
 }
@@ -334,12 +339,12 @@ Object* Interpreter::evaluate (Expr* expr) {
     return any_cast<Object*>(expr -> accept(*this));
 }
 
-void Interpreter::checkNumberOperand (Token op, Object *operand) {
+void Interpreter::checkNumberOperand (Token *op, Object *operand) {
     if (Double* d = dynamic_cast<Double*>(operand)) return;
     throw new Interpreter::RuntimeError(op, "Operand must be a number.");
 }
 
-void Interpreter::checkNumberOperands (Token op, Object *operand1, Object *operand2) {
+void Interpreter::checkNumberOperands (Token *op, Object *operand1, Object *operand2) {
     if (Double* d1 = dynamic_cast<Double*>(operand1)) {
         if (Double* d2 = dynamic_cast<Double*>(operand2))
             return;

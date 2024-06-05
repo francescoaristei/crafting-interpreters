@@ -7,7 +7,7 @@
 # include <any>
 using namespace std;
 
-Logical::Logical (Expr *left, Token op, Expr *right) {
+Logical::Logical (Expr *left, Token *op, Expr *right) {
     this ->  left =  left;
     this ->  op =  op;
     this ->  right =  right;
@@ -47,7 +47,7 @@ Expr* Logical::getleft() {
    return this -> left;
 }
 
-Token Logical::getop() {
+Token* Logical::getop() {
    return this -> op;
 }
 

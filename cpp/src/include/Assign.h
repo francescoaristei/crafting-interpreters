@@ -10,16 +10,16 @@ class VisitorExprBase;
 
 class Assign: public Expr {
    public: 
-       Assign (Token name, Expr *value);
+       Assign (Token *name, Expr *value);
        /*~Assign ();
        Assign& operator= (const Assign& other);
        Assign (const Assign& other);
        Assign* deepcopy ();*/
        any accept (VisitorExprBase& visitor);
-       Token  getname();
+       Token* getname();
        Expr* getvalue();
    private: 
-       Token name;
+       Token* name;
        Expr *value;
 };
 

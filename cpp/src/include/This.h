@@ -9,11 +9,11 @@ class VisitorExprBase;
 
 class This: public Expr {
    public: 
-       This (Token name);
+       This (Token *name);
        any accept (VisitorExprBase& visitor);
-       Token getname ();
+       Token* getname ();
    private: 
-       Token name;
+       Token *name;
 };
 
 # endif

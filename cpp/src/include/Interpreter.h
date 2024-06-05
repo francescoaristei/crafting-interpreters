@@ -68,16 +68,16 @@ class Interpreter: public VisitorExpr<Object*>, VisitorStmt<void> {
         Environment *globals = new Environment();
         class RuntimeError: public runtime_error {
             public:
-                RuntimeError(Token token, const string& message) 
+                RuntimeError(Token *token, const string& message) 
                     : message(message)
                     , token(token)
                     , runtime_error(message) 
                     {}
                 string getMessage () {return this -> message;}
-                Token getToken () {return this -> token;}
+                Token* getToken () {return this -> token;}
             private:
                 string message;
-                Token token;
+                Token *token;
         };
         class ReturnEx: public runtime_error {
             public:
@@ -95,11 +95,11 @@ class Interpreter: public VisitorExpr<Object*>, VisitorStmt<void> {
         bool isEqual(Object *a, Object *b);
         //Environment *environment = new Environment();
         Environment *environment = globals;
-        void checkNumberOperand(Token op, Object *operand);
-        void checkNumberOperands(Token op, Object *operand1, Object *operand2);
+        void checkNumberOperand(Token *op, Object *operand);
+        void checkNumberOperands(Token *op, Object *operand1, Object *operand2);
         string stringify(Object *object);
         map<Expr*, int> locals;
-        Object* lookUpVariable(Token name, Expr *expr);
+        Object* lookUpVariable(Token *name, Expr *expr);
 };
 
 # endif

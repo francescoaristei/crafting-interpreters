@@ -6,16 +6,16 @@
 # include <any>
 using namespace std;
 
-Super::Super (Token keyword, Token method) {
+Super::Super (Token *keyword, Token *method) {
     this -> keyword = keyword;
     this -> method = method;
 };
 
-Token Super::getkeyword () {
+Token* Super::getkeyword () {
     return this -> keyword;
 }
 
-Token Super::getmethod () {
+Token* Super::getmethod () {
     return this -> method;
 }
 

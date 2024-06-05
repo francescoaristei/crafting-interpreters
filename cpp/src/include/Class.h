@@ -12,17 +12,17 @@ using namespace std;
 
 class Class: public Stmt {
    public: 
-       Class (Token name, Variable *superclass, vector<Stmt*> methods);
+       Class (Token *name, Variable *superclass, vector<Stmt*> methods);
        /*~Class ();
        Class& operator= (const Class& other);
        Class (const Class& other);
        Class* deepcopy ();*/
        any accept (VisitorStmtBase& visitor);
-       Token getname();
-       vector<Stmt*> getmethods();
+       Token* getname();
+       const vector<Stmt*>& getmethods() const;
        Variable* getsuperclass ();
    private: 
-       Token name;
+       Token *name;
        vector<Stmt*> methods;
        Variable *superclass;
 };

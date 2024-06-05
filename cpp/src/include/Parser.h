@@ -18,14 +18,14 @@ using namespace std;
 
 class Parser {
     public:
-        Parser(vector<Token> tokens);
+        Parser(vector<Token*> tokens);
         vector<Stmt*> parse();
     private:
         class ParseError: public runtime_error {
             public:
                 ParseError(const string& message) : runtime_error(message){}
         };
-        vector<Token> tokens;
+        vector<Token*> tokens;
         int current = 0;
         Stmt* statement();
         Stmt* whileStatement();
@@ -51,15 +51,15 @@ class Parser {
         Expr* primary();
         Expr* call();
         Expr* finishCall (Expr *callee);
-        Token consume(TokenType type, const string& message);
-        ParseError error(Token token, const string& message);
+        Token* consume(TokenType type, const string& message);
+        ParseError error(Token *token, const string& message);
         void synchronize();
         bool match(vector<TokenType> types);
         bool check(TokenType type);
-        Token advance();
+        Token* advance();
         bool isAtEnd();
-        Token peek();
-        Token previous();
+        Token* peek();
+        Token* previous();
 };
 
 # endif

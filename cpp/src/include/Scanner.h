@@ -14,11 +14,11 @@ using namespace std;
 class Scanner {
     public:
         Scanner (string source);
-        vector<Token> scanTokens();
+        vector<Token*> scanTokens();
 
     private:
         string source;
-        vector<Token> tokens;
+        vector<Token*> tokens;
         int start = 0;
         int current = 0;
         int line = 1;

@@ -7,11 +7,11 @@
 using namespace std;
 
 
-Variable::Variable (Token name) {
+Variable::Variable (Token *name) {
     this ->  name =  name;
 };
 
-Token Variable::getname() {
+Token* Variable::getname() {
    return this -> name;
 }
 

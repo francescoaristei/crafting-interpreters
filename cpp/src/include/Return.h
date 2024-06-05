@@ -10,17 +10,17 @@ using namespace std;
 
 class Return: public Stmt {
    public: 
-       Return (Token keyword, Expr *value);
+       Return (Token *keyword, Expr *value);
        /*~Return ();
        Return& operator= (const Return& other);
        Return (const Return& other);
        Return* deepcopy ();*/
        any accept (VisitorStmtBase& visitor);
        Expr* getvalue();
-       Token getkeyword();
+       Token* getkeyword();
    private: 
        Expr *value;
-       Token keyword;
+       Token *keyword;
 };
 
 # endif

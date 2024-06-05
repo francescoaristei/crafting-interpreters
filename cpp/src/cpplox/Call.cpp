@@ -7,7 +7,7 @@
 # include <any>
 using namespace std;
 
-Call::Call (Expr *callee, Token paren, vector<Expr*> arguments) {
+Call::Call (Expr *callee, Token *paren, vector<Expr*> arguments) {
     this ->  callee =  callee;
     this ->  paren =  paren;
     this ->  arguments =  arguments;
@@ -61,11 +61,11 @@ Expr* Call::getcallee() {
    return this -> callee;
 }
 
-Token Call::getparen() {
+Token* Call::getparen() {
    return this -> paren;
 }
 
-vector<Expr*> Call::getarguments() {
+const vector<Expr*>& Call::getarguments() const {
    return this -> arguments;
 }
 

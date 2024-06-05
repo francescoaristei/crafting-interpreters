@@ -8,7 +8,7 @@
 # include <any>
 using namespace std;
 
-Function::Function (Token name, vector<Token> params, vector<Stmt*> body) {
+Function::Function (Token *name, vector<Token*> params, vector<Stmt*> body) {
     this ->  name =  name;
     this -> params = params;
     this -> body = body;
@@ -55,15 +55,15 @@ Function* Function::deepcopy () {
     return new Function(*this);
 }*/
 
-Token Function::getname() {
+Token* Function::getname() {
    return this -> name;
 }
 
-vector<Token> Function::getparams () {
+const vector<Token*>& Function::getparams () const {
     return this -> params;
 }
 
-vector<Stmt*> Function::getbody () {
+const vector<Stmt*>& Function::getbody () const {
     return this -> body;
 }
 

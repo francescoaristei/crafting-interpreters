@@ -40,20 +40,20 @@ string LoxInstance::toString () {
     return klass->getname() + " instance";
 }
 
-Object* LoxInstance::get (Token name) {
-    if (fields.find(name.getLexeme()) != fields.end()) {
-        return fields[name.getLexeme()];
+Object* LoxInstance::get (Token *name) {
+    if (fields.find(name->getLexeme()) != fields.end()) {
+        return fields[name->getLexeme()];
     }
 
-    LoxFunction *method = klass->findMethod(name.getLexeme());
+    LoxFunction *method = klass->findMethod(name->getLexeme());
     if (method != NULL) return method->bind(this);
 
-    throw new Interpreter::RuntimeError (name, "Undefined property '" + name.getLexeme() + "'.");
+    throw new Interpreter::RuntimeError (name, "Undefined property '" + name->getLexeme() + "'.");
 }
 
 
-void LoxInstance::set (Token name, Object *value) {
-    fields[name.getLexeme()] = value;
+void LoxInstance::set (Token *name, Object *value) {
+    fields[name->getLexeme()] = value;
 }
 
 
