@@ -41,18 +41,11 @@ Environment::Environment (Environment *enclosing) {
 }
 
 void Environment::define (string name, Object *value) {
-    /*if (String *s1 = dynamic_cast<String*>(value)) {
-        cout << s1->getValue() << "\n";
-    }*/
     values[name] = value;
-    //cout << values.size() << "\n";
 }
 
 Object* Environment::get (Token *name) {
     map<string, Object*>::iterator it = values.find(name->getLexeme());
-    /*for (map<string, Object*>::iterator itr = values.begin(); itr != values.end(); ++itr) {
-        cout << itr->first << "\n";
-    }*/
     if (it != values.end()) {
         return it -> second;
     }
@@ -87,13 +80,6 @@ Environment* Environment::ancestor (int distance) {
 }
 
 Object* Environment::getAt (int distance, string name) {
-    /*for (map<string,Object*>::iterator itr = values.begin(); itr != values.end(); ++itr) {
-        cout << itr->first << "\n";
-        cout << distance << "\n";
-    }*/
-    /*if (String *s1 = dynamic_cast<String*>(ancestor(distance)->getValues()[name])) {
-        cout << s1->getValue() << "\n";
-    }*/
     return ancestor(distance)->getValues()[name];
 }
 

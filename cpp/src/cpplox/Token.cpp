@@ -12,7 +12,7 @@ Token::Token (TokenType type, string lexeme, Object *literal, int line) {
     this -> literal = literal;
 }
 
-/*Token::~Token () {
+Token::~Token () {
     delete literal;
 }
 
@@ -36,7 +36,7 @@ Token::Token (const Token& other) {
     lexeme = other.lexeme;
     line = other.line;
     literal = other.literal;
-}*/
+}
 
 string Token::getLexeme () {
     return this -> lexeme;
