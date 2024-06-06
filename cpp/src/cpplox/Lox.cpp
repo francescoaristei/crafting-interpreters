@@ -96,8 +96,8 @@ void Lox::run (string source) {
 
     Interpreter interpreter;
     
-    Resolver resolver(interpreter);
-    resolver.resolve(statements);
+    Resolver *resolver = new Resolver(interpreter);
+    resolver->resolve(statements);
 
     if (hadError) return;
 

@@ -44,7 +44,13 @@ void Interpreter::execute (Stmt* stmt) {
 }
 
 void Interpreter::resolve (Expr *expr, int depth) {
+    /*if (Variable *v1 = dynamic_cast<Variable*>(expr)) {
+            cout << v1->getname()->getLexeme() << "\n";
+    }*/
+    //cout << locals.size() << "A\n";
     locals[expr] = depth;
+    //cout << locals.size() << "A\n";
+
 }
 
 void Interpreter::interpret (vector<Stmt*> statements) {
@@ -66,8 +72,21 @@ Object* Interpreter::visitVariableExpr (Variable& expr) {
 }
 
 Object* Interpreter::lookUpVariable (Token *name, Expr *expr) {
+    /*for (map<Expr*, int>::iterator itr = locals.begin(); itr != locals.end(); ++itr) {
+        if (Variable *v1 = dynamic_cast<Variable*>(itr->first)) {
+            cout << v1->getname()->getLexeme() << "\n";
+        }
+    }*/
+
+    /*if (Variable *v1 = dynamic_cast<Variable*>(expr)) {
+            cout << v1->getname()->getLexeme() << "\n";
+    }*/
+
+    //cout << locals.size() << "B\n";
+
     if (locals.find(expr) != locals.end()) {
         int distance = locals[expr];
+        //cout << environment->getValues().size() << "\n";
         return environment->getAt(distance, name->getLexeme());
     } else {
         return globals->get(name);
@@ -79,7 +98,6 @@ void Interpreter::visitVarStmt (Var& stmt) {
     if (stmt.getinitializer() != NULL) {
         value = evaluate(stmt.getinitializer());
     }
-
     environment -> define(stmt.getToken()->getLexeme(), value);
 }
 
@@ -190,6 +208,7 @@ Object* Interpreter::visitCallExpr (Call& expr) {
 }
 
 Object* Interpreter::visitAssignExpr (Assign& expr) {
+    
     Object* value = evaluate(expr.getvalue());
 
     if (locals.find(&expr) != locals.end()) {

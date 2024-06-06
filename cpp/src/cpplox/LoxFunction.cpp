@@ -51,9 +51,9 @@ Object* LoxFunction::call (Interpreter interpreter, vector<Object*> arguments) {
     }
     try {
         interpreter.executeBlock(declaration->getbody(), environment);
-    } catch (Interpreter::ReturnEx returnValue) {
+    } catch (Interpreter::ReturnEx *returnValue) {
         if (isInitializer) return closure->getAt(0, "this");
-        return returnValue.getvalue();
+        return returnValue->getvalue();
     }
 
     if (isInitializer) return closure->getAt(0, "this");

@@ -30,13 +30,12 @@
 # include <list>
 
 
-Resolver::Resolver (Interpreter interpreter) {
-    this -> interpreter = interpreter;
+Resolver::Resolver (Interpreter& interpreter) : interpreter(interpreter) {
+    //this -> interpreter = interpreter;
 }
 
 
 void Resolver::resolve (Stmt *stmt) {
-    //cout << dynamic_cast<Function*>(dynamic_cast<Class*>(stmt)->getmethods()[0])->getname()->getLexeme() << "\n";
     stmt->accept(*this);
 }
 
@@ -45,9 +44,7 @@ void Resolver::resolve (Expr *expr) {
 }
 
 void Resolver::resolve (vector<Stmt*> statements) {
-    //cout << dynamic_cast<Function*>(dynamic_cast<Class*>(statements[0])->getmethods()[0])->getname()->getLexeme() << "\n";
     for (vector<Stmt*>::iterator itr = statements.begin(); itr != statements.end(); ++itr) {
-        //cout << dynamic_cast<Function*>(dynamic_cast<Class*>(*itr)->getmethods()[0])->getname()->getLexeme() << "\n";
         resolve(*itr);
     }
 }
@@ -55,13 +52,14 @@ void Resolver::resolve (vector<Stmt*> statements) {
 void Resolver::resolveLocal (Expr *expr, Token *name) {
     list<map<string, bool>> templist;
     int i = scopes.size() - 1;
+    int scopes_len = scopes.size() - 1;
     bool exit = false;
     while (!scopes.empty()) {
         map<string, bool> tempmap;
         tempmap = scopes.top();
         for (map<string, bool>::iterator itr = tempmap.begin(); itr != tempmap.end(); ++itr) {
-            if (tempmap.find(itr->first) != tempmap.end()) {
-                interpreter.resolve(expr, scopes.size() - 1 - i);
+            if (tempmap.find(name->getLexeme()) != tempmap.end()) {
+                interpreter.resolve(expr, scopes_len - i);
                 exit = true;
                 break;
             }
@@ -73,8 +71,10 @@ void Resolver::resolveLocal (Expr *expr, Token *name) {
     }
 
     while (!templist.empty()) {
-        scopes.push(*templist.begin());
-        templist.pop_front();
+        //scopes.push(*templist.begin());
+        scopes.push(templist.back());
+        //templist.pop_front();
+        templist.pop_back();
     }
 }
 
@@ -108,7 +108,7 @@ void Resolver::declare (Token *name) {
         // STILL ERROR WITH LOX
         //Lox.error(name, "Already variable with this name in this scope");
     }
-    scope[name->getLexeme()] = false;
+    scopes.top()[name->getLexeme()] = false;
 }
 
 void Resolver::define (Token *name) {
@@ -166,7 +166,6 @@ void Resolver::visitReturnStmt (Return& stmt) {
 }
 
 void Resolver::visitClassStmt (Class& stmt) {
-    //cout << dynamic_cast<Function*>(stmt.getmethods()[0])->getname()->getLexeme() << "\n";
     ClassType enclosingClass = currentClass;
     currentClass = ClassType::CLASS;
 
@@ -191,7 +190,6 @@ void Resolver::visitClassStmt (Class& stmt) {
     beginScope();
     scopes.top()["this"] = true;
 
-    //cout << dynamic_cast<Function*>(stmt.getmethods()[1])->getname()->getLexeme() << "\n";
     for (vector<Stmt*>::const_iterator itr = stmt.getmethods().begin(); itr != stmt.getmethods().end(); ++itr) {
         Function* func = dynamic_cast<Function*>(*itr);
         if (func) {
@@ -216,12 +214,13 @@ void Resolver::visitWhileStmt (While& stmt) {
 }
 
 void Resolver::visitVariableExpr (Variable& expr) {
-    if (!scopes.empty() &&
+    /*if (!scopes.empty() &&
         scopes.top()[expr.getname()->getLexeme()] == false) {
             // STILL ERROR WITH LOX
             //Lox.error(expr.getname(), "Can't read local variable in its own initializer");
-        }
-        resolveLocal (&expr, expr.getname());
+    }*/
+    
+    resolveLocal (&expr, expr.getname());
 }
 
 void Resolver::visitAssignExpr (Assign& expr) {

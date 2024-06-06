@@ -35,7 +35,7 @@
 
 class Resolver: public VisitorExpr<void>, VisitorStmt<void> {
     public:
-        Resolver (Interpreter interpreter);
+        Resolver (Interpreter& interpreter);
         void visitBlockStmt (Block& stmt);
         void visitVarStmt (Var& stmt);
         void visitFunctionStmt (Function& stmt);
@@ -63,7 +63,7 @@ class Resolver: public VisitorExpr<void>, VisitorStmt<void> {
         enum FunctionType {NONE_F, FUNCTION, METHOD, INITIALIZER};
         enum ClassType {NONE_C, CLASS, SUBCLASS};
         stack<map<string, bool>> scopes;
-        Interpreter interpreter;
+        Interpreter& interpreter;
         void resolve (Stmt *stmt);
         void resolve (Expr *expr);
         void beginScope ();

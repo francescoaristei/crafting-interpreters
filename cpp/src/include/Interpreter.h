@@ -79,9 +79,9 @@ class Interpreter: public VisitorExpr<Object*>, VisitorStmt<void> {
                 string message;
                 Token *token;
         };
-        class ReturnEx: public runtime_error {
+        class ReturnEx: public exception {
             public:
-                ReturnEx (Object *value) : runtime_error("return") {
+                ReturnEx (Object *value) {
                     this -> value = value;
                 }
                 Object* getvalue() {return this -> value;};

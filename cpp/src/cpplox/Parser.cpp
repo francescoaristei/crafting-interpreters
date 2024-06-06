@@ -363,7 +363,6 @@ Stmt* Parser::ifStatement () {
 }
 
 Stmt* Parser::printStatement () {
-    //cout << "ENTERED1" << "\n";
     Expr *value = expression();
     consume(SEMICOLON, "Expect ';' after value.");
     return new Print(value);
@@ -465,7 +464,6 @@ vector<Stmt*> Parser::parse () {
         vector<Stmt*> statements;
         while (!isAtEnd()) {
             statements.push_back(declaration());
-            //cout << dynamic_cast<Function*>(dynamic_cast<Class*>(statements[0])->getmethods()[0])->getname()->getLexeme() << "\n";
         }
         return statements;
     } catch (ParseError error) {
